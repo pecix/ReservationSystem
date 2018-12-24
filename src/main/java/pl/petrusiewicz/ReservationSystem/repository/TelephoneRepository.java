@@ -28,4 +28,13 @@ public class TelephoneRepository {
     public void update(int id, Telephone telephone){
         telephones.set(id, telephone);
     }
+
+    public boolean isExist(int internalNumber){
+        for(Telephone tel: telephones){
+            if (tel.getInternalNumber() == internalNumber){
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -29,4 +29,14 @@ public class ConferenceRoomRepository {
     public void update(int id, ConferenceRoom conferenceRoom){
         conferenceRooms.set(id, conferenceRoom);
     }
+
+    public boolean isExist(String name){
+        for(ConferenceRoom confRoom: conferenceRooms){
+            if (confRoom.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

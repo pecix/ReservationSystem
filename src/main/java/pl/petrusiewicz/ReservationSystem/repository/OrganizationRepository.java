@@ -28,4 +28,24 @@ public class OrganizationRepository {
     public void update(int id, Organization organization){
         organizations.set(id, organization);
     }
+
+    public boolean isExist(String name){
+        for(Organization org: organizations){
+            if (org.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Organization findByName(String name){
+        for(Organization organization: organizations){
+            if (organization.getName().equals(name)){
+                return organization;
+            }
+        }
+        return null;
+    }
+
+
 }

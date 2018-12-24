@@ -1,18 +1,23 @@
 package pl.petrusiewicz.ReservationSystem.model;
 
+import java.time.LocalDateTime;
+
 public class ConferenceRoom {
 
     private float id;
     private String name;
     private int floor;
-    private boolean available;
+    private boolean available = true;
     private int numberOfSeats;
     private int numberOfStandingPlaces;
     private int numberOfLyingPlaces;
     private int numberOfHangingPlaces;
     private String projectorName;
-    private boolean hasTelephone;
+    private boolean haveTelephone;
     private Telephone telephone;
+    private String nameOfBookingOrganization;
+    private LocalDateTime beginReservation;
+    private LocalDateTime endReservation;
 
     public float getId() {
         return id;
@@ -86,12 +91,12 @@ public class ConferenceRoom {
         this.projectorName = projectorName;
     }
 
-    public boolean isHasTelephone() {
-        return hasTelephone;
+    public boolean isHaveTelephone() {
+        return haveTelephone;
     }
 
-    public void setHasTelephone(boolean hasTelephone) {
-        this.hasTelephone = hasTelephone;
+    public void setHaveTelephone(boolean haveTelephone) {
+        this.haveTelephone = haveTelephone;
     }
 
     public Telephone getTelephone() {
@@ -100,5 +105,29 @@ public class ConferenceRoom {
 
     public void setTelephone(Telephone telephone) {
         this.telephone = telephone;
+    }
+
+    public String getNameOfBookingOrganization() {
+        return nameOfBookingOrganization;
+    }
+
+    public void setNameOfBookingOrganization(String nameOfBookingOrganization) {
+        this.nameOfBookingOrganization = nameOfBookingOrganization;
+    }
+
+    public LocalDateTime getBeginReservation() {
+        return beginReservation;
+    }
+
+    public void setBeginReservation(LocalDateTime beginReservation) {
+        this.beginReservation = beginReservation;
+    }
+
+    public LocalDateTime getEndReservation() {
+        return endReservation;
+    }
+
+    public void setEndReservation(LocalDateTime endReservation) {
+        this.endReservation = endReservation;
     }
 }
