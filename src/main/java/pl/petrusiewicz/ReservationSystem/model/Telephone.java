@@ -1,10 +1,31 @@
 package pl.petrusiewicz.ReservationSystem.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+@Entity
 public class Telephone {
 
+    @Id
+    @GeneratedValue
+    private int id;
     private int internalNumber;
     private String externalNumber;
-    private ConnectionInterface connectionInterface;
+//    @OneToOne
+    private TelephoneConnectionInterface telephoneConnectionInterface;
+
+    //=========================================================
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getInternalNumber() {
         return internalNumber;
@@ -22,11 +43,11 @@ public class Telephone {
         this.externalNumber = externalNumber;
     }
 
-    public ConnectionInterface getConnectionInterface() {
-        return connectionInterface;
+    public TelephoneConnectionInterface getTelephoneConnectionInterface() {
+        return telephoneConnectionInterface;
     }
 
-    public void setConnectionInterface(ConnectionInterface connectionInterface) {
-        this.connectionInterface = connectionInterface;
+    public void setTelephoneConnectionInterface(TelephoneConnectionInterface telephoneConnectionInterface) {
+        this.telephoneConnectionInterface = telephoneConnectionInterface;
     }
 }

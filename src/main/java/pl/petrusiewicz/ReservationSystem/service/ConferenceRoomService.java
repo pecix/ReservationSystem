@@ -1,36 +1,29 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
-import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
+import pl.petrusiewicz.ReservationSystem.model.Organization;
+import pl.petrusiewicz.ReservationSystem.repository.OrganizationRepo;
 
 import java.util.List;
 
 @Service
 public class ConferenceRoomService {
 
-    ConferenceRoomRepository repository = new ConferenceRoomRepository();
-
-    public List<ConferenceRoom> getAll(){
-        return repository.getAll();
-    }
-
-    public ConferenceRoom get(int id){
-        return repository.get(id);
-    }
-
-    public void  add(ConferenceRoom conferenceRoom){
-        repository.add(conferenceRoom);
-    }
-
-    public void remove(int id){
-        repository.remove(id);
-    }
-
-    public void update(int id, ConferenceRoom conferenceRoom){
-        repository.update(id, conferenceRoom);
-    }
+    @Autowired
+    OrganizationRepo repository;
+    @Autowired
+    OrganizationService service;
 
 
-
+//    public void addConferenceRoom(String name, ConferenceRoom conferenceRoom){
+//        Organization organization = service.findByName(name);
+//        List<ConferenceRoom> conferenceRooms = organization.getConferenceRooms();
+//        for (ConferenceRoom c: conferenceRooms){
+//            if (c.getName().equalsIgnoreCase(name)){
+//
+//            }
+//        }
+//    }
 }

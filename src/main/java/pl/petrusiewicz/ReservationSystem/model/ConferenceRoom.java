@@ -1,11 +1,20 @@
 package pl.petrusiewicz.ReservationSystem.model;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.util.HashSet;
+import java.util.List;
 
+@Entity
 public class ConferenceRoom {
 
-    private float id;
+    @Id
+    @GeneratedValue
+    private int id;
+    @NotBlank
+    @Size(min = 2, max = 20)
     private String name;
+    private String description;
     private int floor;
     private boolean available = true;
     private int numberOfSeats;
@@ -14,16 +23,19 @@ public class ConferenceRoom {
     private int numberOfHangingPlaces;
     private String projectorName;
     private boolean haveTelephone;
+    @OneToOne
     private Telephone telephone;
-    private String nameOfBookingOrganization;
-    private LocalDateTime beginReservation;
-    private LocalDateTime endReservation;
+    @OneToMany
+    private List<Reservation> reservations;
 
-    public float getId() {
+    //=======================================================
+
+
+    public int getId() {
         return id;
     }
 
-    public void setId(float id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -33,6 +45,14 @@ public class ConferenceRoom {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getFloor() {
@@ -107,27 +127,11 @@ public class ConferenceRoom {
         this.telephone = telephone;
     }
 
-    public String getNameOfBookingOrganization() {
-        return nameOfBookingOrganization;
+    public List<Reservation> getReservations() {
+        return reservations;
     }
 
-    public void setNameOfBookingOrganization(String nameOfBookingOrganization) {
-        this.nameOfBookingOrganization = nameOfBookingOrganization;
-    }
-
-    public LocalDateTime getBeginReservation() {
-        return beginReservation;
-    }
-
-    public void setBeginReservation(LocalDateTime beginReservation) {
-        this.beginReservation = beginReservation;
-    }
-
-    public LocalDateTime getEndReservation() {
-        return endReservation;
-    }
-
-    public void setEndReservation(LocalDateTime endReservation) {
-        this.endReservation = endReservation;
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
 }
