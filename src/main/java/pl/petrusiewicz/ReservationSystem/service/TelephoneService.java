@@ -2,7 +2,11 @@ package pl.petrusiewicz.ReservationSystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
+import pl.petrusiewicz.ReservationSystem.model.Organization;
 import pl.petrusiewicz.ReservationSystem.model.Telephone;
+import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
+import pl.petrusiewicz.ReservationSystem.repository.OrganizationRepository;
 import pl.petrusiewicz.ReservationSystem.repository.TelephoneRepository;
 
 import java.util.List;
@@ -11,6 +15,30 @@ import java.util.List;
 public class TelephoneService {
 
     @Autowired
-    TelephoneRepository repository;
+    TelephoneRepository telephoneRepository;
+    @Autowired
+    ConferenceRoomRepository conferenceRoomRepository;
+    @Autowired
+    ConferenceRoomService conferenceRoomService;
 
+    public Telephone get(String organizationName, String conferenceRoomName){
+        return conferenceRoomService.findByName(organizationName, conferenceRoomName).getTelephone();
+    }
+
+    public void add(String organizationName, String conferenceRoomName, Telephone telephone){
+        telephoneRepository.save(telephone);
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
+        conferenceRoom.setHaveTelephone(true);
+        conferenceRoom.setTelephone(telephone);
+        conferenceRoomRepository.save(conferenceRoom);
+    }
+
+    public void remove(String organizationName, String conferenceRoomName){
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
+        int id = conferenceRoom.getTelephone().getId();
+        conferenceRoom.setHaveTelephone(false);
+        conferenceRoom.setTelephone(null);
+        telephoneRepository.deleteById(id);
+        conferenceRoomRepository.save(conferenceRoom);
+    }
 }
