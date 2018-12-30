@@ -20,7 +20,11 @@ public class OrganizationService {
     }
 
     public Organization get(int id){
-        return repository.findById(id).get();
+        if(repository.findById(id).isPresent()){
+            return repository.findById(id).get();
+        } else {
+            return null;
+        }
     }
 
     public boolean isExist(String name){

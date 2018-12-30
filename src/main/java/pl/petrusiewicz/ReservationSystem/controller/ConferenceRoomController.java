@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
 import pl.petrusiewicz.ReservationSystem.service.ConferenceRoomService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/{organizationName}")
 public class ConferenceRoomController {
@@ -18,7 +20,7 @@ public class ConferenceRoomController {
         return ResponseEntity.ok(conferenceRoomService.getAll(organizationName));
     }
 
-    @GetMapping("/conferenceroom/get/{id}")
+    @GetMapping("/conferenceroom/id/{id}")
     public ResponseEntity getById(@PathVariable int id){
         ConferenceRoom conferenceRoom = conferenceRoomService.getById(id);
         if (conferenceRoom != null){
@@ -39,7 +41,7 @@ public class ConferenceRoomController {
     }
 
     @PostMapping("/conferenceroom")
-    public ResponseEntity add(@PathVariable String organizationName, @RequestBody ConferenceRoom conferenceRoom){
+    public ResponseEntity add(@PathVariable String organizationName, @Valid @RequestBody ConferenceRoom conferenceRoom){
         if(!conferenceRoomService.isExist(organizationName, conferenceRoom)){
             conferenceRoomService.addConferenceRoom(organizationName, conferenceRoom);
             return ResponseEntity.status(201).build();

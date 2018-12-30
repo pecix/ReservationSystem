@@ -11,10 +11,15 @@ public class ConferenceRoom {
     @Id
     @GeneratedValue
     private int id;
+    @NotNull
     @NotBlank
     @Size(min = 2, max = 20)
     private String name;
+    @NotBlank
+    @Size(min = 2, max = 20)
     private String description;
+    @Min(0)
+    @Max(10)
     private int floor;
     private boolean available = true;
     private int numberOfSeats;

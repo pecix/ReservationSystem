@@ -10,39 +10,28 @@ import pl.petrusiewicz.ReservationSystem.service.OrganizationService;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/organization")
+@RequestMapping
 public class OrganizationController {
 
     @Autowired
     OrganizationService service;
 
-    @GetMapping("/get")
+    @GetMapping("/organizations")
     public ResponseEntity getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("organization/id/{id}")
     public ResponseEntity get(@PathVariable int id) {
         int size = service.getAll().size();
         if (id > 0 && id <= size) {
             return ResponseEntity.ok(service.get(id));
         } else {
-            return ResponseEntity.badRequest().body("Nie ma organizacji o id: " + id);
+            return ResponseEntity.badRequest().body("Organizacja o ID: " + id + " nie istnieje");
         }
     }
 
-    @PostMapping("/add")
-    public ResponseEntity add(@Valid @RequestBody Organization organization) {
-        organization.setName(organization.getName().trim());
-        if (!service.isExist(organization.getName())) {
-            service.add(organization);
-            return ResponseEntity.status(201).build();
-        } else {
-            return ResponseEntity.badRequest().body("Organizacja już istnieje");
-        }
-    }
-
-    @GetMapping("/find/{name}")
+    @GetMapping("/organization/{name}")
     public ResponseEntity findByName(@PathVariable String name){
         if (service.isExist(name)){
             return ResponseEntity.ok(service.findByName(name));
@@ -51,8 +40,18 @@ public class OrganizationController {
         }
     }
 
+    @PostMapping("/organization")
+    public ResponseEntity add(@Valid @RequestBody Organization organization) {
+        organization.setName(organization.getName().trim());
+        if (!service.isExist(organization.getName())) {
+            service.add(organization);
+            return ResponseEntity.status(201).build();
+        } else {
+            return ResponseEntity.badRequest().body("Organizacja " + organization.getName() + " już istnieje");
+        }
+    }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/organization/{id}")
     public ResponseEntity remove(@PathVariable int id){
         service.remove(id);
         return ResponseEntity.ok().build();

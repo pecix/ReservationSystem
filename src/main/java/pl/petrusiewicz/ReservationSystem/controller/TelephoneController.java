@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.petrusiewicz.ReservationSystem.model.Telephone;
 import pl.petrusiewicz.ReservationSystem.service.TelephoneService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/{organizationName}/{conferenceRoomName}")
 public class TelephoneController {
@@ -24,7 +26,7 @@ public class TelephoneController {
     }
 
     @PostMapping("/telephone")
-    public ResponseEntity add(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @RequestBody Telephone telephone){
+    public ResponseEntity add(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @Valid @RequestBody Telephone telephone){
         Telephone tel = service.get(organizationName, conferenceRoomName);
         if (tel == null){
             service.add(organizationName, conferenceRoomName, telephone);

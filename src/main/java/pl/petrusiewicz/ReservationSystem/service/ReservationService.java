@@ -3,35 +3,74 @@ package pl.petrusiewicz.ReservationSystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
+import pl.petrusiewicz.ReservationSystem.model.Reservation;
+import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
+import pl.petrusiewicz.ReservationSystem.repository.ReservationRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ReservationService {
 
     @Autowired
-    OrganizationService organizations;
+    ReservationRepository reservationRepository;
     @Autowired
-    ConferenceRoomService conferenceRooms;
+    ConferenceRoomRepository conferenceRoomRepository;
+    @Autowired
+    ConferenceRoomService conferenceRoomService;
 
-//    public void book(int id, Organization organization, LocalDateTime begin, LocalDateTime end){
-//        ConferenceRoom room = conferenceRooms.get(id);
-//        if (room.isAvailable()){
-//            room.setNameOfBookingOrganization(organization.getName());
-//            room.setBeginReservation(begin);
-//            room.setEndReservation(end);
-//            room.setAvailable(false);
-//            conferenceRooms.update(id, room);
-//        }
-//    }
+    public List<Reservation> getAll(String organizationName, String conferenceRoomName){
+        return conferenceRoomService.findByName(organizationName, conferenceRoomName).getReservations();
+    }
 
-//    public void cancel(int id, Organization organization){
-//        ConferenceRoom room = conferenceRooms.get(id);
-//        if(!room.isAvailable() && room.getNameOfBookingOrganization().equals(organization.getName())){
-//            room.setNameOfBookingOrganization(null);
-//            room.setBeginReservation(null);
-//            room.setEndReservation(null);
-//            room.setAvailable(true);
-//            conferenceRooms.update(id, room);
-//        }
-//    }
+    public Reservation getById(int id){
+        if (reservationRepository.findById(id).isPresent()){
+            return reservationRepository.findById(id).get();
+        } else {
+            return null;
+        }
+    }
+
+    public Reservation findByName(String organizationName, String conferenceRoomName, String reservingName){
+        List<Reservation> reservations = getAll(organizationName, conferenceRoomName);
+        for(Reservation res: reservations){
+            if (res.getReservingName().equalsIgnoreCase(reservingName)){
+                return res;
+            }
+        }
+        return null;
+    }
+
+    public void book(String organizationName, String conferenceRoomName, Reservation reservation){
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
+        reservationRepository.save(reservation);
+        conferenceRoom.getReservations().add(reservation);
+//        conferenceRoom.setAvailable(false);
+        conferenceRoomRepository.save(conferenceRoom);
+    }
+
+    public void cancel(String organizationName, String conferenceRoomName, String reservingName){
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
+
+//        =======================================Kasowanie pierwszej rezerwacji=========================================
+//        Reservation reservation = findByName(organizationName, conferenceRoomName, reservingName);
+//        conferenceRoom.getReservations().remove(reservation);
+//        reservationRepository.deleteById(reservation.getId());
+//        conferenceRoomRepository.save(conferenceRoom);
+
+//        =======================================Kasowanie wszystkich rezerwacji========================================
+        Reservation reservation = findByName(organizationName, conferenceRoomName, reservingName);
+        while (reservation != null){
+            conferenceRoom.getReservations().remove(reservation);
+            reservationRepository.deleteById(reservation.getId());
+            reservation = findByName(organizationName, conferenceRoomName, reservingName);
+        }
+
+
+//        conferenceRoom.setAvailable(true);
+        conferenceRoomRepository.save(conferenceRoom);
+    }
 
 }

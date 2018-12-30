@@ -20,11 +20,16 @@ public class ConferenceRoomService {
     OrganizationService organizationService;
 
     public List<ConferenceRoom> getAll(String organizationName){
+
         return organizationService.findByName(organizationName).getConferenceRooms();
     }
 
     public ConferenceRoom getById(int id){
-        return conferenceRoomRepository.findById(id).get();
+        if(conferenceRoomRepository.findById(id).isPresent()){
+            return conferenceRoomRepository.findById(id).get();
+        } else {
+            return null;
+        }
     }
 
     public ConferenceRoom findByName(String organizationName, String conferenceRoomName){
