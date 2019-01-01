@@ -55,4 +55,12 @@ public class OrganizationService {
         repository.deleteById(id);
     }
 
+    public void update(String organizationName, Organization newOrganization){
+        Organization org = findByName(organizationName);
+        if (org != null){
+            org.setName(newOrganization.getName());
+            repository.save(org);
+        }
+    }
+
 }

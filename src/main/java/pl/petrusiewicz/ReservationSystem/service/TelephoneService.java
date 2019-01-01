@@ -41,4 +41,14 @@ public class TelephoneService {
         telephoneRepository.deleteById(id);
         conferenceRoomRepository.save(conferenceRoom);
     }
+
+    public void update(String organizationName, String conferenceRoomName, Telephone newTelephone){
+        Telephone telephone = get(organizationName, conferenceRoomName);
+        if (telephone != null) {
+            telephone.setInternalNumber(newTelephone.getInternalNumber());
+            telephone.setExternalNumber(newTelephone.getExternalNumber());
+            telephone.setTelephoneConnectionInterface(newTelephone.getTelephoneConnectionInterface());
+            telephoneRepository.save(telephone);
+        }
+    }
 }

@@ -68,4 +68,20 @@ public class ConferenceRoomService {
         organizationRepository.save(organization);
     }
 
+    public void update(String organizationName, String conferenceRoomName, ConferenceRoom newConferenceRoom){
+        ConferenceRoom conferenceRoom = findByName(organizationName, conferenceRoomName);
+        if (conferenceRoom != null) {
+            conferenceRoom.setName(newConferenceRoom.getName());
+            conferenceRoom.setDescription(newConferenceRoom.getDescription());
+            conferenceRoom.setFloor(newConferenceRoom.getFloor());
+            conferenceRoom.setAvailable(newConferenceRoom.isAvailable());
+            conferenceRoom.setNumberOfSeats(newConferenceRoom.getNumberOfSeats());
+            conferenceRoom.setNumberOfStandingPlaces(newConferenceRoom.getNumberOfStandingPlaces());
+            conferenceRoom.setNumberOfLyingPlaces(newConferenceRoom.getNumberOfLyingPlaces());
+            conferenceRoom.setNumberOfHangingPlaces(newConferenceRoom.getNumberOfHangingPlaces());
+            conferenceRoom.setProjectorName(newConferenceRoom.getProjectorName());
+            conferenceRoomRepository.save(conferenceRoom);
+        }
+    }
+
 }

@@ -71,4 +71,14 @@ public class ReservationService {
         conferenceRoomRepository.save(conferenceRoom);
     }
 
+    public void update(String organizationName, String conferenceRoomName, Reservation newReservation){
+        Reservation reservation = getById(newReservation.getId());
+        if (reservation != null) {
+            reservation.setReservingName(newReservation.getReservingName());
+            reservation.setBeginReservation(newReservation.getBeginReservation());
+            reservation.setEndReservation(newReservation.getEndReservation());
+            reservationRepository.save(reservation);
+        }
+    }
+
 }
