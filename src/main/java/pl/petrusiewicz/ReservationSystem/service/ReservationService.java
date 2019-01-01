@@ -51,25 +51,23 @@ public class ReservationService {
         conferenceRoomRepository.save(conferenceRoom);
     }
 
-    public void cancel(String organizationName, String conferenceRoomName, String reservingName){
+    public void cancelAllByName(String organizationName, String conferenceRoomName, String reservingName){
         ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
-
-//        =======================================Kasowanie pierwszej rezerwacji=========================================
-//        Reservation reservation = findByName(organizationName, conferenceRoomName, reservingName);
-//        conferenceRoom.getReservations().remove(reservation);
-//        reservationRepository.deleteById(reservation.getId());
-//        conferenceRoomRepository.save(conferenceRoom);
-
-//        =======================================Kasowanie wszystkich rezerwacji========================================
         Reservation reservation = findByName(organizationName, conferenceRoomName, reservingName);
         while (reservation != null){
             conferenceRoom.getReservations().remove(reservation);
             reservationRepository.deleteById(reservation.getId());
             reservation = findByName(organizationName, conferenceRoomName, reservingName);
         }
-
-
 //        conferenceRoom.setAvailable(true);
+        conferenceRoomRepository.save(conferenceRoom);
+    }
+
+    public void cancelById(String organizationName, String conferenceRoomName, int id){
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
+        conferenceRoom.getReservations().remove(reservationRepository.findById(id).get());
+//        conferenceRoom.setAvailable(true);
+        reservationRepository.deleteById(id);
         conferenceRoomRepository.save(conferenceRoom);
     }
 

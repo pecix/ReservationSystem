@@ -14,16 +14,16 @@ import javax.validation.Valid;
 public class ReservationController {
 
     @Autowired
-    ReservationService service;
+    ReservationService reservationService;
 
     @GetMapping("/reservations")
     public ResponseEntity getAll(@PathVariable String organizationName, @PathVariable String conferenceRoomName){
-        return ResponseEntity.ok().body(service.getAll(organizationName, conferenceRoomName));
+        return ResponseEntity.ok().body(reservationService.getAll(organizationName, conferenceRoomName));
     }
 
     @GetMapping("/reservation/id/{id}")
     public ResponseEntity getById(@PathVariable int id){
-        Reservation reservation = service.getById(id);
+        Reservation reservation = reservationService.getById(id);
         if (reservation != null){
             return ResponseEntity.ok().body(reservation);
         } else {
@@ -33,7 +33,7 @@ public class ReservationController {
 
     @GetMapping("/reservation/{reservingName}")
     public ResponseEntity findByName(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @PathVariable String reservingName){
-        Reservation reservation = service.findByName(organizationName, conferenceRoomName, reservingName);
+        Reservation reservation = reservationService.findByName(organizationName, conferenceRoomName, reservingName);
         if (reservation != null){
             return ResponseEntity.ok().body(reservation);
         } else {
@@ -43,18 +43,29 @@ public class ReservationController {
 
     @PostMapping("/reservation")
     public ResponseEntity book(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @Valid @RequestBody Reservation reservation){
-        service.book(organizationName, conferenceRoomName, reservation);
+        reservationService.book(organizationName, conferenceRoomName, reservation);
         return ResponseEntity.status(201).build();
     }
 
     @DeleteMapping("/reservation/{reservingName}")
-    public ResponseEntity cancel(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @PathVariable String reservingName){
-        Reservation reservation = service.findByName(organizationName, conferenceRoomName, reservingName);
+    public ResponseEntity cancelAllByName(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @PathVariable String reservingName){
+        Reservation reservation = reservationService.findByName(organizationName, conferenceRoomName, reservingName);
         if (reservation != null){
-            service.cancel(organizationName, conferenceRoomName, reservingName);
+            reservationService.cancelAllByName(organizationName, conferenceRoomName, reservingName);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomName + " nie jest zarezerwowana przez " + reservingName);
+        }
+    }
+
+    @DeleteMapping("/reservation/id/{id}")
+    public ResponseEntity cancelById(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @PathVariable int id){
+        Reservation reservation = reservationService.getById(id);
+        if (reservation != null){
+            reservationService.cancelById(organizationName, conferenceRoomName, id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().body("Rezerwacja o ID: " + id + " nie istnieje");
         }
     }
 
