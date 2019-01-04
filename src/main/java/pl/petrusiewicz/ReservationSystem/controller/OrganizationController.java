@@ -22,7 +22,7 @@ public class OrganizationController {
 
     @GetMapping("/{id}")
     public ResponseEntity get(@PathVariable int id) {
-        if (service.isExist(id)) {
+        if (service.existById(id)) {
             return ResponseEntity.ok(service.findById(id));
         } else {
             return ResponseEntity.badRequest().body("Organizacja o ID: " + id + " nie istnieje");
@@ -31,7 +31,7 @@ public class OrganizationController {
 
     @GetMapping(params = "name")
     public ResponseEntity findByName(@RequestParam String name){
-        if (service.isExistByName(name)) {
+        if (service.existByName(name)) {
             return ResponseEntity.ok(service.findByName(name));
         } else {
             return ResponseEntity.badRequest().body("Nie ma organizacji o nazwie " + name);
@@ -41,7 +41,7 @@ public class OrganizationController {
     @PostMapping
     public ResponseEntity add(@Valid @RequestBody Organization organization) {
         organization.setName(organization.getName().trim());
-        if (!service.isExistByName(organization.getName())) {
+        if (!service.existByName(organization.getName())) {
             service.add(organization);
             return ResponseEntity.status(201).build();
         } else {
@@ -51,7 +51,7 @@ public class OrganizationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity remove(@PathVariable int id){
-        if(service.isExist(id)){
+        if(service.existById(id)){
             service.remove(id);
             return ResponseEntity.status(200).build();
         } else {
@@ -61,7 +61,7 @@ public class OrganizationController {
 
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Organization organization){
-        if (service.isExist(id)){
+        if (service.existById(id)){
             service.update(id, organization);
             return ResponseEntity.ok().build();
         } else {

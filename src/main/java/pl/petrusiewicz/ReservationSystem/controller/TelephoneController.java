@@ -1,49 +1,83 @@
-//package pl.petrusiewicz.ReservationSystem.controller;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import pl.petrusiewicz.ReservationSystem.model.Telephone;
-//import pl.petrusiewicz.ReservationSystem.service.TelephoneService;
-//
-//import javax.validation.Valid;
-//
-//@RestController
-//@RequestMapping("/{organizationName}/{conferenceRoomName}")
-//public class TelephoneController {
-//
-//    @Autowired
-//    TelephoneService service;
-//
-//    @GetMapping("/telephone")
-//    public ResponseEntity get(@PathVariable String organizationName, @PathVariable String conferenceRoomName){
-//        Telephone telephone = service.get(organizationName, conferenceRoomName);
-//        if (telephone != null){
-//            return ResponseEntity.ok().body(telephone);
-//        } else {
-//            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomName + " nie posiada telefonu.");
-//        }
-//    }
-//
-//    @PostMapping("/telephone")
-//    public ResponseEntity add(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @Valid @RequestBody Telephone telephone){
-//        Telephone tel = service.get(organizationName, conferenceRoomName);
-//        if (tel == null){
-//            service.add(organizationName, conferenceRoomName, telephone);
-//            return ResponseEntity.status(201).build();
-//        } else {
-//            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomName + " posiada już telefon.");
-//        }
-//    }
-//
-//    @DeleteMapping("/telephone")
-//    public ResponseEntity remove(@PathVariable String organizationName, @PathVariable String conferenceRoomName){
-//        Telephone telephone = service.get(organizationName, conferenceRoomName);
-//        if (telephone != null){
-//            service.remove(organizationName, conferenceRoomName);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomName + " nie posiada telefonu.");
-//        }
-//    }
-//}
+package pl.petrusiewicz.ReservationSystem.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.petrusiewicz.ReservationSystem.model.Telephone;
+import pl.petrusiewicz.ReservationSystem.service.ConferenceRoomService;
+import pl.petrusiewicz.ReservationSystem.service.OrganizationService;
+import pl.petrusiewicz.ReservationSystem.service.TelephoneService;
+
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/organizations/{organizationId}/rooms/{roomId}")
+public class TelephoneController {
+
+    @Autowired
+    TelephoneService telephoneService;
+    @Autowired
+    ConferenceRoomService conferenceRoomService;
+    @Autowired
+    OrganizationService organizationService;
+
+
+    @GetMapping("/telephones")
+    public ResponseEntity get(@PathVariable int roomId){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        Telephone telephone = telephoneService.get(roomId);
+        if (telephone != null){
+            return ResponseEntity.ok().body(telephone);
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu.");
+        }
+    }
+
+    @PostMapping("/telephones")
+    public ResponseEntity add(@PathVariable int roomId, @Valid @RequestBody Telephone telephone){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        Telephone tel = telephoneService.get(roomId);
+        if (tel == null){
+            telephoneService.add(roomId, telephone);
+            return ResponseEntity.status(201).build();
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " posiada już telefon.");
+        }
+    }
+
+    @DeleteMapping("/telephones")
+    public ResponseEntity remove(@PathVariable int roomId){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        Telephone telephone = telephoneService.get(roomId);
+        if (telephone != null){
+            telephoneService.remove(roomId);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu.");
+        }
+    }
+
+    @PutMapping("/telephones")
+    public ResponseEntity update(@PathVariable int roomId, @Valid @RequestBody Telephone updatedTelephone){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        Telephone telephone = telephoneService.get(roomId);
+        if (telephone != null){
+            telephoneService.update(roomId, updatedTelephone);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu.");
+        }
+    }
+}

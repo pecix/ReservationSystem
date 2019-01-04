@@ -4,7 +4,7 @@
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.*;
 //import pl.petrusiewicz.ReservationSystem.model.Reservation;
-//import pl.petrusiewicz.ReservationSystem.service.ReservationService;
+//import pl.petrusiewicz.ReservationSystem.telephoneService.ReservationService;
 //
 //import javax.validation.Valid;
 //

@@ -22,11 +22,11 @@ public class OrganizationService {
         return repository.findById(id);
     }
 
-    public boolean isExist(int id){
+    public boolean existById(int id){
         return repository.existsById(id);
     }
 
-    public boolean isExistByName(String name){
+    public boolean existByName(String name){
         return repository.existsByName(name);
     }
 

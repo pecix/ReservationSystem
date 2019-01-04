@@ -20,7 +20,7 @@ public class ConferenceRoomController {
 
     @GetMapping("/rooms")
     public ResponseEntity findAll(@PathVariable int organizationId) {
-        if (!organizationService.isExist(organizationId)) {
+        if (!organizationService.existById(organizationId)) {
             return ResponseEntity.badRequest().body("Organizacja o ID: " + organizationId + " nie istnieje");
         }
 
@@ -29,7 +29,7 @@ public class ConferenceRoomController {
 
     @GetMapping("/rooms/{id}")
     public ResponseEntity findById(@PathVariable int organizationId, @PathVariable int id) {
-        if (!organizationService.isExist(organizationId)) {
+        if (!organizationService.existById(organizationId)) {
             return ResponseEntity.badRequest().body("Organizacja o ID: " + organizationId + " nie istnieje");
         }
 
@@ -43,7 +43,7 @@ public class ConferenceRoomController {
 
     @GetMapping(value = "/rooms", params = "name")
     public ResponseEntity findByName(@PathVariable int organizationId, @RequestParam String name) {
-        if (!organizationService.isExist(organizationId)) {
+        if (!organizationService.existById(organizationId)) {
             return ResponseEntity.badRequest().body("Organizacja o ID: " + organizationId + " nie istnieje");
         }
 
@@ -57,11 +57,11 @@ public class ConferenceRoomController {
 
     @PostMapping("/rooms")
     public ResponseEntity add(@PathVariable int organizationId, @Valid @RequestBody ConferenceRoom conferenceRoom) {
-        if (!organizationService.isExist(organizationId)){
+        if (!organizationService.existById(organizationId)){
             return ResponseEntity.badRequest().body("Organizacja o ID: " +  organizationId + " nie istnieje");
         }
 
-        if (!conferenceRoomService.isExistByName(organizationId, conferenceRoom)) {
+        if (!conferenceRoomService.existByName(organizationId, conferenceRoom.getName())) {
             conferenceRoomService.addConferenceRoom(organizationId, conferenceRoom);
             return ResponseEntity.status(201).build();
         }
@@ -70,7 +70,7 @@ public class ConferenceRoomController {
 
     @DeleteMapping("/rooms/{id}")
     public ResponseEntity remove(@PathVariable int organizationId, @PathVariable int id) {
-        if (!organizationService.isExist(organizationId)){
+        if (!organizationService.existById(organizationId)){
             return ResponseEntity.badRequest().body("Organizacja o ID: " +  organizationId + " nie istnieje");
         }
 
@@ -85,7 +85,7 @@ public class ConferenceRoomController {
 
     @PutMapping("/rooms/{id}")
     public ResponseEntity update(@PathVariable int organizationId, @PathVariable int id, @Valid @RequestBody ConferenceRoom updatedConferenceRoom) {
-        if (!organizationService.isExist(organizationId)){
+        if (!organizationService.existById(organizationId)){
             return ResponseEntity.badRequest().body("Organizacja o ID: " +  organizationId + " nie istnieje");
         }
 

@@ -37,11 +37,15 @@ public class ConferenceRoomService {
         return null;
     }
 
-    public boolean isExistByName(int organizationId, ConferenceRoom conferenceRoom){
+    public boolean existById(int id){
+        return conferenceRoomRepository.existsById(id);
+    }
+
+    public boolean existByName(int organizationId, String conferenceRoomName){
         List<ConferenceRoom> conferenceRooms = findAll(organizationId);
         boolean exist = false;
         for (ConferenceRoom room: conferenceRooms){
-            if(!exist && room.getName().equalsIgnoreCase(conferenceRoom.getName())){
+            if(!exist && room.getName().equalsIgnoreCase(conferenceRoomName)){
                 exist=true;
             }
         }
@@ -62,14 +66,6 @@ public class ConferenceRoomService {
         conferenceRoomRepository.delete(conferenceRoom);
         organizationRepository.save(organization);
     }
-
-//    public void removeConferenceRoomByName(int organizationId, String conferenceRoomName){
-//        Organization organization = organizationService.findById(organizationId);
-//        ConferenceRoom conferenceRoom = findByName(organizationId, conferenceRoomName);
-//        organization.getConferenceRooms().remove(conferenceRoom);
-//        conferenceRoomRepository.delete(conferenceRoom);
-//        organizationRepository.save(organization);
-//    }
 
     public void update(int id, ConferenceRoom newConferenceRoom){
         ConferenceRoom conferenceRoom = findById(id);
