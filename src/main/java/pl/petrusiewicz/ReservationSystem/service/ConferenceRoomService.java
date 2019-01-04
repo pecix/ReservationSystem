@@ -19,21 +19,16 @@ public class ConferenceRoomService {
     @Autowired
     OrganizationService organizationService;
 
-    public List<ConferenceRoom> getAll(String organizationName){
-
-        return organizationService.findByName(organizationName).getConferenceRooms();
+    public List<ConferenceRoom> findAll(int organizationId){
+        return organizationService.findById(organizationId).getConferenceRooms();
     }
 
-    public ConferenceRoom getById(int id){
-        if(conferenceRoomRepository.findById(id).isPresent()){
-            return conferenceRoomRepository.findById(id).get();
-        } else {
-            return null;
-        }
+    public ConferenceRoom findById(int id){
+        return conferenceRoomRepository.findById(id);
     }
 
-    public ConferenceRoom findByName(String organizationName, String conferenceRoomName){
-        List<ConferenceRoom> conferenceRooms = getAll(organizationName);
+    public ConferenceRoom findByName(int organizationId, String conferenceRoomName){
+        List<ConferenceRoom> conferenceRooms = findAll(organizationId);
         for (ConferenceRoom room: conferenceRooms){
             if(room.getName().equalsIgnoreCase(conferenceRoomName)){
                 return room;
@@ -42,30 +37,50 @@ public class ConferenceRoomService {
         return null;
     }
 
-    public boolean isExist(String organizationName, ConferenceRoom conferenceRoom){
-        List<ConferenceRoom> conferenceRooms = getAll(organizationName);
+    public boolean existById(int id){
+        return conferenceRoomRepository.existsById(id);
+    }
+
+    public boolean existByName(int organizationId, String conferenceRoomName){
+        List<ConferenceRoom> conferenceRooms = findAll(organizationId);
         boolean exist = false;
         for (ConferenceRoom room: conferenceRooms){
-            if(!exist && room.getName().equalsIgnoreCase(conferenceRoom.getName())){
+            if(!exist && room.getName().equalsIgnoreCase(conferenceRoomName)){
                 exist=true;
             }
         }
         return exist;
     }
 
-    public void addConferenceRoom(String organizationName, ConferenceRoom conferenceRoom){
-        Organization organization = organizationService.findByName(organizationName);
+    public void addConferenceRoom(int organizationId, ConferenceRoom conferenceRoom){
+        Organization organization = organizationService.findById(organizationId);
         conferenceRoomRepository.save(conferenceRoom);
         organization.getConferenceRooms().add(conferenceRoom);
         organizationRepository.save(organization);
     }
 
-    public void removeConferenceRoomByName(String organizationName, String conferenceRoomName){
-        Organization organization = organizationService.findByName(organizationName);
-        ConferenceRoom conferenceRoom = findByName(organizationName, conferenceRoomName);
+    public void remove(int organizationId, int id){
+        Organization organization = organizationService.findById(organizationId);
+        ConferenceRoom conferenceRoom = findById(id);
         organization.getConferenceRooms().remove(conferenceRoom);
         conferenceRoomRepository.delete(conferenceRoom);
         organizationRepository.save(organization);
+    }
+
+    public void update(int id, ConferenceRoom newConferenceRoom){
+        ConferenceRoom conferenceRoom = findById(id);
+        if (conferenceRoom != null) {
+            conferenceRoom.setName(newConferenceRoom.getName());
+            conferenceRoom.setDescription(newConferenceRoom.getDescription());
+            conferenceRoom.setFloor(newConferenceRoom.getFloor());
+            conferenceRoom.setAvailable(newConferenceRoom.isAvailable());
+            conferenceRoom.setNumberOfSeats(newConferenceRoom.getNumberOfSeats());
+            conferenceRoom.setNumberOfStandingPlaces(newConferenceRoom.getNumberOfStandingPlaces());
+            conferenceRoom.setNumberOfLyingPlaces(newConferenceRoom.getNumberOfLyingPlaces());
+            conferenceRoom.setNumberOfHangingPlaces(newConferenceRoom.getNumberOfHangingPlaces());
+            conferenceRoom.setProjectorName(newConferenceRoom.getProjectorName());
+            conferenceRoomRepository.save(conferenceRoom);
+        }
     }
 
 }

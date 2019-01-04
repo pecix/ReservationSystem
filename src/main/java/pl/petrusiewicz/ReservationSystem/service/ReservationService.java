@@ -18,23 +18,18 @@ public class ReservationService {
     ReservationRepository reservationRepository;
     @Autowired
     ConferenceRoomRepository conferenceRoomRepository;
-    @Autowired
-    ConferenceRoomService conferenceRoomService;
 
-    public List<Reservation> getAll(String organizationName, String conferenceRoomName){
-        return conferenceRoomService.findByName(organizationName, conferenceRoomName).getReservations();
+
+    public List<Reservation> findAll(int roomId){
+        return conferenceRoomRepository.findById(roomId).getReservations();
     }
 
-    public Reservation getById(int id){
-        if (reservationRepository.findById(id).isPresent()){
-            return reservationRepository.findById(id).get();
-        } else {
-            return null;
-        }
+    public Reservation findById(int id){
+        return reservationRepository.findById(id);
     }
 
-    public Reservation findByName(String organizationName, String conferenceRoomName, String reservingName){
-        List<Reservation> reservations = getAll(organizationName, conferenceRoomName);
+    public Reservation findFirstByName(int roomId, String reservingName){
+        List<Reservation> reservations = findAll(roomId);
         for(Reservation res: reservations){
             if (res.getReservingName().equalsIgnoreCase(reservingName)){
                 return res;
@@ -43,32 +38,53 @@ public class ReservationService {
         return null;
     }
 
-    public void book(String organizationName, String conferenceRoomName, Reservation reservation){
-        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
+    public List<Reservation> findAllByName(int roomId, String reservingName){
+        List<Reservation> reservations = findAll(roomId);
+        List<Reservation> temp = new ArrayList<>();
+        for (Reservation reservation: reservations){
+            if (reservation.getReservingName().equalsIgnoreCase(reservingName)){
+                temp.add(reservation);
+            }
+        }
+        return temp;
+    }
+
+    public void book(int roomId, Reservation reservation){
+        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
         reservationRepository.save(reservation);
         conferenceRoom.getReservations().add(reservation);
 //        conferenceRoom.setAvailable(false);
         conferenceRoomRepository.save(conferenceRoom);
     }
 
-    public void cancelAllByName(String organizationName, String conferenceRoomName, String reservingName){
-        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
-        Reservation reservation = findByName(organizationName, conferenceRoomName, reservingName);
+    public void cancelAllByName(int roomId, String reservingName){
+        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
+        Reservation reservation = findFirstByName(roomId, reservingName);
         while (reservation != null){
             conferenceRoom.getReservations().remove(reservation);
             reservationRepository.deleteById(reservation.getId());
-            reservation = findByName(organizationName, conferenceRoomName, reservingName);
+            reservation = findFirstByName(roomId, reservingName);
         }
 //        conferenceRoom.setAvailable(true);
         conferenceRoomRepository.save(conferenceRoom);
     }
 
-    public void cancelById(String organizationName, String conferenceRoomName, int id){
-        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationName, conferenceRoomName);
-        conferenceRoom.getReservations().remove(reservationRepository.findById(id).get());
+    public void cancelById(int roomId, int id){
+        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
+        conferenceRoom.getReservations().remove(reservationRepository.findById(id));
 //        conferenceRoom.setAvailable(true);
         reservationRepository.deleteById(id);
         conferenceRoomRepository.save(conferenceRoom);
+    }
+
+    public void update(int id, Reservation updatedReservation){
+        Reservation reservation = findById(id);
+        if (reservation != null) {
+            reservation.setReservingName(updatedReservation.getReservingName());
+            reservation.setBeginReservation(updatedReservation.getBeginReservation());
+            reservation.setEndReservation(updatedReservation.getEndReservation());
+            reservationRepository.save(reservation);
+        }
     }
 
 }
