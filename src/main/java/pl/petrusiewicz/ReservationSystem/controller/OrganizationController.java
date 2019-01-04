@@ -23,7 +23,7 @@ public class OrganizationController {
     @GetMapping("/{id}")
     public ResponseEntity get(@PathVariable int id) {
         if (service.isExist(id)) {
-            return ResponseEntity.ok(service.get(id));
+            return ResponseEntity.ok(service.findById(id));
         } else {
             return ResponseEntity.badRequest().body("Organizacja o ID: " + id + " nie istnieje");
         }
@@ -51,8 +51,12 @@ public class OrganizationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity remove(@PathVariable int id){
-        service.remove(id);
-        return ResponseEntity.status(200).build();
+        if(service.isExist(id)){
+            service.remove(id);
+            return ResponseEntity.status(200).build();
+        } else {
+            return ResponseEntity.badRequest().body("Organizacja o ID: " + id + " nie istnieje");
+        }
     }
 
     @PutMapping("/{id}")

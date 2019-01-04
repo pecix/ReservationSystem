@@ -11,6 +11,8 @@ public interface OrganizationRepository extends PagingAndSortingRepository<Organ
 
     Organization findByName(String name);
 
+    Organization findById(int id);
+
     boolean existsByName (String name);
 
     List<Organization> findAll();
