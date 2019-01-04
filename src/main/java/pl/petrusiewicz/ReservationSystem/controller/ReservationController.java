@@ -1,72 +1,107 @@
-//package pl.petrusiewicz.ReservationSystem.controller;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import pl.petrusiewicz.ReservationSystem.model.Reservation;
-//import pl.petrusiewicz.ReservationSystem.telephoneService.ReservationService;
-//
-//import javax.validation.Valid;
-//
-//
-//@RestController
-//@RequestMapping("/{organizationName}/{conferenceRoomName}")
-//public class ReservationController {
-//
-//    @Autowired
-//    ReservationService reservationService;
-//
-//    @GetMapping("/reservations")
-//    public ResponseEntity getAll(@PathVariable String organizationName, @PathVariable String conferenceRoomName){
-//        return ResponseEntity.ok().body(reservationService.getAll(organizationName, conferenceRoomName));
-//    }
-//
-//    @GetMapping("/reservation/id/{id}")
-//    public ResponseEntity getById(@PathVariable int id){
-//        Reservation reservation = reservationService.getById(id);
-//        if (reservation != null){
-//            return ResponseEntity.ok().body(reservation);
-//        } else {
-//            return ResponseEntity.badRequest().body("Rezerwacja o ID: " + id + " nie istnieje.");
-//        }
-//    }
-//
-//    @GetMapping("/reservation/{reservingName}")
-//    public ResponseEntity findByName(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @PathVariable String reservingName){
-//        Reservation reservation = reservationService.findByName(organizationName, conferenceRoomName, reservingName);
-//        if (reservation != null){
-//            return ResponseEntity.ok().body(reservation);
-//        } else {
-//            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomName + " nie jest zarezerwowana przez " + reservingName);
-//        }
-//    }
-//
-//    @PostMapping("/reservation")
-//    public ResponseEntity book(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @Valid @RequestBody Reservation reservation){
-//        reservationService.book(organizationName, conferenceRoomName, reservation);
-//        return ResponseEntity.status(201).build();
-//    }
-//
-//    @DeleteMapping("/reservation/{reservingName}")
-//    public ResponseEntity cancelAllByName(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @PathVariable String reservingName){
-//        Reservation reservation = reservationService.findByName(organizationName, conferenceRoomName, reservingName);
-//        if (reservation != null){
-//            reservationService.cancelAllByName(organizationName, conferenceRoomName, reservingName);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomName + " nie jest zarezerwowana przez " + reservingName);
-//        }
-//    }
-//
-//    @DeleteMapping("/reservation/id/{id}")
-//    public ResponseEntity cancelById(@PathVariable String organizationName, @PathVariable String conferenceRoomName, @PathVariable int id){
-//        Reservation reservation = reservationService.getById(id);
-//        if (reservation != null){
-//            reservationService.cancelById(organizationName, conferenceRoomName, id);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.badRequest().body("Rezerwacja o ID: " + id + " nie istnieje");
-//        }
-//    }
-//
-//}
+package pl.petrusiewicz.ReservationSystem.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.petrusiewicz.ReservationSystem.model.Reservation;
+import pl.petrusiewicz.ReservationSystem.service.ConferenceRoomService;
+import pl.petrusiewicz.ReservationSystem.service.ReservationService;
+
+import javax.validation.Valid;
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/organizations/{organizationId}/rooms/{roomId}")
+public class ReservationController {
+
+    @Autowired
+    ReservationService reservationService;
+    @Autowired
+    ConferenceRoomService conferenceRoomService;
+
+    @GetMapping("/reservations")
+    public ResponseEntity findAll(@PathVariable int roomId){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        return ResponseEntity.ok().body(reservationService.findAll(roomId));
+    }
+
+    @GetMapping("/reservations/{id}")
+    public ResponseEntity getById(@PathVariable int id){
+        Reservation reservation = reservationService.findById(id);
+        if (reservation != null){
+            return ResponseEntity.ok().body(reservation);
+        } else {
+            return ResponseEntity.badRequest().body("Rezerwacja o ID: " + id + " nie istnieje.");
+        }
+    }
+
+    @GetMapping(value = "/reservations", params = "name")
+    public ResponseEntity findByName(@PathVariable int roomId, @RequestParam String name){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        List<Reservation> reservations = reservationService.findAllByName(roomId, name);
+        if (!reservations.isEmpty()){
+            return ResponseEntity.ok().body(reservations);
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie jest zarezerwowana przez " + name);
+        }
+    }
+
+    @PostMapping("/reservations")
+    public ResponseEntity book(@PathVariable int roomId, @Valid @RequestBody Reservation reservation){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        reservationService.book(roomId, reservation);
+        return ResponseEntity.status(201).build();
+    }
+
+    @DeleteMapping(value = "/reservations", params = "name")
+    public ResponseEntity cancelAllByName(@PathVariable int roomId, @RequestParam String name){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        List<Reservation> reservations = reservationService.findAllByName(roomId, name);
+        if (!reservations.isEmpty()){
+            reservationService.cancelAllByName(roomId, name);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie jest zarezerwowana przez " + name);
+        }
+    }
+
+    @DeleteMapping("/reservations/{id}")
+    public ResponseEntity cancelById(@PathVariable int roomId, @PathVariable int id){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        Reservation reservation = reservationService.findById(id);
+        if (reservation != null){
+            reservationService.cancelById(roomId, id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().body("Rezerwacja o ID: " + id + " nie istnieje");
+        }
+    }
+
+    @PutMapping("/reservations/{id}")
+    public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Reservation updatedReservation){
+        Reservation reservation = reservationService.findById(id);
+        if (reservation != null) {
+            reservationService.update(id, updatedReservation);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().body("Rezerwacja o ID: " + id + " nie istnieje");
+        }
+    }
+
+}

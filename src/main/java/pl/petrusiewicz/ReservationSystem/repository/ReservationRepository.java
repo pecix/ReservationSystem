@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends PagingAndSortingRepository<Reservation, Integer> {
 
-    List<Reservation> findAllByReservingName(String reservingName);
-
-    void deleteAllByReservingName(String name);
+    Reservation findById(int id);
 
 }
