@@ -1,7 +1,12 @@
 package pl.petrusiewicz.ReservationSystem.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
 
-public interface ConferenceRoomRepository extends CrudRepository<ConferenceRoom, Integer> {
+@Repository
+public interface ConferenceRoomRepository extends PagingAndSortingRepository<ConferenceRoom, Integer>{
+
+    ConferenceRoom findByName(String name);
+
 }

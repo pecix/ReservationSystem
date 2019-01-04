@@ -5,7 +5,7 @@
 2. Żeby uruchomić projekt nałeży wpisac w wierszu poleceń``gradle bootRun``
 3. Żeby dodać organizację za pomocą CURL'a należy w wierszu poleceń wpisać ``curl -d {\"name\":\"pepsi\"} -H "Content-Type: application/json" -X POST http://localhost:8080/organization``
 
-####Spis endpiont'ów:
+####Spis endpoint'ów:
 1. Organizacje:
     - POST - localhost:8080/organization - Dodaje organizację.
         - JSON: `{

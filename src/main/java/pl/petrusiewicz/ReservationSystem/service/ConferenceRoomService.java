@@ -1,6 +1,7 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
 import pl.petrusiewicz.ReservationSystem.model.Organization;

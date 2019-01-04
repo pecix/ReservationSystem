@@ -1,6 +1,7 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import pl.petrusiewicz.ReservationSystem.model.Organization;
@@ -15,51 +16,44 @@ public class OrganizationService {
     @Autowired
     OrganizationRepository repository;
 
-    public List<Organization> getAll(){
-        return Utils.iterableToList(repository.findAll());
+    public List<Organization> findAll() {
+        return repository.findAll();
+//        return Utils.iterableToList(repository.findAll());
     }
 
-    public Organization get(int id){
-        if(repository.findById(id).isPresent()){
+    public Organization get(int id) {
+        if (repository.findById(id).isPresent()) {
             return repository.findById(id).get();
         } else {
             return null;
         }
     }
 
-    public boolean isExist(String name){
-        List<Organization> organizations = getAll();
-        for(Organization organization: organizations){
-            if(organization.getName().equalsIgnoreCase(name)){
-                return true;
-            }
-        }
-        return false;
+    public boolean isExist(int id){
+        return repository.existsById(id);
     }
 
-    public Organization findByName(String name){
-        List<Organization> organizations = getAll();
-        for (Organization organization: organizations){
-            if(organization.getName().equalsIgnoreCase(name)){
-                return organization;
-            }
-        }
-        return null;
+    public boolean isExistByName(String name){
+        return repository.existsByName(name);
     }
 
-    public void add(Organization organization){
+    public Organization findByName(String name) {
+        return repository.findByName(name);
+    }
+
+    public void add(Organization organization) {
         repository.save(organization);
     }
 
-    public void remove(int id){
+    public void remove(int id) {
         repository.deleteById(id);
     }
 
-    public void update(String organizationName, Organization newOrganization){
-        Organization org = findByName(organizationName);
-        if (org != null){
-            org.setName(newOrganization.getName());
-            repository.save(org);
+    public void update(int id, Organization newOrganization) {
+        Organization organization = get(id);
+        if (organization != null) {
+            organization.setName(newOrganization.getName());
+            repository.save(organization);
         }
     }
 
