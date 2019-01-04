@@ -10,12 +10,8 @@ import java.util.List;
 public interface OrganizationRepository extends PagingAndSortingRepository<Organization, Integer> {
 
     Organization findByName(String name);
-
     Organization findById(int id);
-
     boolean existsByName (String name);
-
     List<Organization> findAll();
-
 
 }

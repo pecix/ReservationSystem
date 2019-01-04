@@ -8,5 +8,5 @@ import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
 public interface ConferenceRoomRepository extends PagingAndSortingRepository<ConferenceRoom, Integer>{
 
     ConferenceRoom findByName(String name);
-
+    ConferenceRoom findById(int id);
 }
