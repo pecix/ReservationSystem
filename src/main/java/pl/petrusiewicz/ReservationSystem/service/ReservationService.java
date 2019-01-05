@@ -10,7 +10,7 @@ import pl.petrusiewicz.ReservationSystem.repository.ReservationRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -117,7 +117,26 @@ public class ReservationService {
                 return false;
             }
         }
+
         return true;
+    }
+
+    public List<Reservation> sort(List<Reservation> reservations){
+        Reservation[] reservationsArray = new Reservation[reservations.size()];
+        reservationsArray = reservations.toArray(reservationsArray);
+        Reservation temp;
+        for (int i=0; i<reservationsArray.length; i++){
+            for (int j=1; j<reservationsArray.length; j++){
+                if (reservationsArray[j].getBeginReservation().isBefore(reservationsArray[j-1].getBeginReservation())){
+                    temp = reservationsArray[j-1];
+                    reservationsArray[j-1] = reservationsArray[j];
+                    reservationsArray[j] = temp;
+                }
+            }
+        }
+        List<Reservation> sortedReservations = new ArrayList<>();
+        sortedReservations.addAll(Arrays.asList(reservationsArray));
+        return sortedReservations;
     }
 
 }
