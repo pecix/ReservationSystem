@@ -93,6 +93,16 @@ public class ReservationController {
         }
     }
 
+    @DeleteMapping("/reservations")
+    public ResponseEntity cancelAll(@PathVariable int roomId){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        reservationService.cancelAll(roomId);
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/reservations/{id}")
     public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Reservation updatedReservation){
         Reservation reservation = reservationService.findById(id);

@@ -77,6 +77,19 @@ public class ReservationService {
         conferenceRoomRepository.save(conferenceRoom);
     }
 
+    public void cancelAll(int roomId){
+        ConferenceRoom room = conferenceRoomRepository.findById(roomId);
+        List<Integer> idList = new ArrayList<>();
+        for (Reservation reservation: room.getReservations()){
+            idList.add(reservation.getId());
+        }
+        room.getReservations().clear();
+        conferenceRoomRepository.save(room);
+        for (Integer id: idList){
+            reservationRepository.deleteById(id);
+        }
+    }
+
     public void update(int id, Reservation updatedReservation){
         Reservation reservation = findById(id);
         if (reservation != null) {

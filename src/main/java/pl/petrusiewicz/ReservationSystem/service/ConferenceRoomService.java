@@ -7,6 +7,7 @@ import pl.petrusiewicz.ReservationSystem.model.Organization;
 import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
 import pl.petrusiewicz.ReservationSystem.repository.OrganizationRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,11 +17,9 @@ public class ConferenceRoomService {
     OrganizationRepository organizationRepository;
     @Autowired
     ConferenceRoomRepository conferenceRoomRepository;
-    @Autowired
-    OrganizationService organizationService;
 
     public List<ConferenceRoom> findAll(int organizationId){
-        return organizationService.findById(organizationId).getConferenceRooms();
+        return organizationRepository.findById(organizationId).getConferenceRooms();
     }
 
     public ConferenceRoom findById(int id){
@@ -53,18 +52,31 @@ public class ConferenceRoomService {
     }
 
     public void addConferenceRoom(int organizationId, ConferenceRoom conferenceRoom){
-        Organization organization = organizationService.findById(organizationId);
+        Organization organization = organizationRepository.findById(organizationId);
         conferenceRoomRepository.save(conferenceRoom);
         organization.getConferenceRooms().add(conferenceRoom);
         organizationRepository.save(organization);
     }
 
     public void remove(int organizationId, int id){
-        Organization organization = organizationService.findById(organizationId);
+        Organization organization = organizationRepository.findById(organizationId);
         ConferenceRoom conferenceRoom = findById(id);
         organization.getConferenceRooms().remove(conferenceRoom);
         conferenceRoomRepository.delete(conferenceRoom);
         organizationRepository.save(organization);
+    }
+
+    public void removeAll(int organizationId){
+        Organization organization = organizationRepository.findById(organizationId);
+        List<Integer> idList = new ArrayList<>();
+        for (ConferenceRoom room : organization.getConferenceRooms()) {
+            idList.add(room.getId());
+        }
+        organization.getConferenceRooms().clear();
+        organizationRepository.save(organization);
+        for(Integer id: idList){
+            conferenceRoomRepository.deleteById(id);
+        }
     }
 
     public void update(int id, ConferenceRoom newConferenceRoom){
