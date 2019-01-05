@@ -59,8 +59,12 @@ public class ReservationController {
             return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
         }
 
-        reservationService.book(roomId, reservation);
-        return ResponseEntity.status(201).build();
+        if (reservationService.checkAvailability(roomId, reservation)){
+            reservationService.book(roomId, reservation);
+            return ResponseEntity.status(201).build();
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " jest zajęta w tym terminie");
+        }
     }
 
     @DeleteMapping(value = "/reservations", params = "name")

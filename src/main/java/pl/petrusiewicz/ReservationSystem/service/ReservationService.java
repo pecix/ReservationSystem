@@ -8,7 +8,9 @@ import pl.petrusiewicz.ReservationSystem.model.Reservation;
 import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
 import pl.petrusiewicz.ReservationSystem.repository.ReservationRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -98,6 +100,24 @@ public class ReservationService {
             reservation.setEndReservation(updatedReservation.getEndReservation());
             reservationRepository.save(reservation);
         }
+    }
+
+    public boolean checkAvailability(int roomId, Reservation reservation){
+        List<Reservation> reservations = findAll(roomId);
+        LocalDateTime start = reservation.getBeginReservation();
+        LocalDateTime end = reservation.getEndReservation();
+        for (Reservation res: reservations){
+            if (start.isEqual(res.getBeginReservation()) || start.isEqual(res.getEndReservation())){
+                return false;
+            } else if (end.isEqual(res.getBeginReservation()) || end.isEqual(res.getEndReservation())) {
+                return false;
+            } else if(start.isAfter(res.getBeginReservation()) && start.isBefore(res.getEndReservation()) ){
+                return false;
+            } else if (end.isAfter(res.getBeginReservation()) && end.isBefore(res.getEndReservation()) ){
+                return false;
+            }
+        }
+        return true;
     }
 
 }
