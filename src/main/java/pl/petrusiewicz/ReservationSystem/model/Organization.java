@@ -46,4 +46,16 @@ public class Organization {
     public void setConferenceRooms(List<ConferenceRoom> conferenceRooms) {
         this.conferenceRooms = conferenceRooms;
     }
+
+    //=====================================================
+
+
+    @Override
+    public String toString() {
+        return "Organization{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", conferenceRooms=" + conferenceRooms +
+                '}';
+    }
 }

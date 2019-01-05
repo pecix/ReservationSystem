@@ -139,4 +139,26 @@ public class ConferenceRoom {
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
     }
+
+    //===============================================================================================
+
+
+    @Override
+    public String toString() {
+        return "ConferenceRoom{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", floor=" + floor +
+                ", available=" + available +
+                ", numberOfSeats=" + numberOfSeats +
+                ", numberOfStandingPlaces=" + numberOfStandingPlaces +
+                ", numberOfLyingPlaces=" + numberOfLyingPlaces +
+                ", numberOfHangingPlaces=" + numberOfHangingPlaces +
+                ", projectorName='" + projectorName + '\'' +
+                ", haveTelephone=" + haveTelephone +
+                ", telephone=" + telephone +
+                ", reservations=" + reservations +
+                '}';
+    }
 }

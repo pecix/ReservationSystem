@@ -42,6 +42,10 @@ public class OrganizationService {
         repository.deleteById(id);
     }
 
+    public void removeAll(){
+        repository.deleteAll();
+    }
+
     public void update(int id, Organization newOrganization) {
         Organization organization = findById(id);
         if (organization != null) {

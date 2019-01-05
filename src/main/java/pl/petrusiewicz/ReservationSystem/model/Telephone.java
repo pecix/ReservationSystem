@@ -53,4 +53,17 @@ public class Telephone {
     public void setTelephoneConnectionInterface(TelephoneConnectionInterface telephoneConnectionInterface) {
         this.telephoneConnectionInterface = telephoneConnectionInterface;
     }
+
+    //==========================================================
+
+
+    @Override
+    public String toString() {
+        return "Telephone{" +
+                "id=" + id +
+                ", internalNumber=" + internalNumber +
+                ", externalNumber='" + externalNumber + '\'' +
+                ", telephoneConnectionInterface=" + telephoneConnectionInterface +
+                '}';
+    }
 }

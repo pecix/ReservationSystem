@@ -55,4 +55,17 @@ public class Reservation {
     public void setEndReservation(LocalDateTime endReservation) {
         this.endReservation = endReservation;
     }
+
+    //================================================
+
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", reservingName='" + reservingName + '\'' +
+                ", beginReservation=" + beginReservation +
+                ", endReservation=" + endReservation +
+                '}';
+    }
 }

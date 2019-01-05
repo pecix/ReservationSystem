@@ -8,7 +8,9 @@ import pl.petrusiewicz.ReservationSystem.model.Reservation;
 import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
 import pl.petrusiewicz.ReservationSystem.repository.ReservationRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -77,6 +79,19 @@ public class ReservationService {
         conferenceRoomRepository.save(conferenceRoom);
     }
 
+    public void cancelAll(int roomId){
+        ConferenceRoom room = conferenceRoomRepository.findById(roomId);
+        List<Integer> idList = new ArrayList<>();
+        for (Reservation reservation: room.getReservations()){
+            idList.add(reservation.getId());
+        }
+        room.getReservations().clear();
+        conferenceRoomRepository.save(room);
+        for (Integer id: idList){
+            reservationRepository.deleteById(id);
+        }
+    }
+
     public void update(int id, Reservation updatedReservation){
         Reservation reservation = findById(id);
         if (reservation != null) {
@@ -85,6 +100,43 @@ public class ReservationService {
             reservation.setEndReservation(updatedReservation.getEndReservation());
             reservationRepository.save(reservation);
         }
+    }
+
+    public boolean checkAvailability(int roomId, Reservation reservation){
+        List<Reservation> reservations = findAll(roomId);
+        LocalDateTime start = reservation.getBeginReservation();
+        LocalDateTime end = reservation.getEndReservation();
+        for (Reservation res: reservations){
+            if (start.isEqual(res.getBeginReservation()) || start.isEqual(res.getEndReservation())){
+                return false;
+            } else if (end.isEqual(res.getBeginReservation()) || end.isEqual(res.getEndReservation())) {
+                return false;
+            } else if(start.isAfter(res.getBeginReservation()) && start.isBefore(res.getEndReservation()) ){
+                return false;
+            } else if (end.isAfter(res.getBeginReservation()) && end.isBefore(res.getEndReservation()) ){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public List<Reservation> sort(List<Reservation> reservations){
+        Reservation[] reservationsArray = new Reservation[reservations.size()];
+        reservationsArray = reservations.toArray(reservationsArray);
+        Reservation temp;
+        for (int i=0; i<reservationsArray.length; i++){
+            for (int j=1; j<reservationsArray.length; j++){
+                if (reservationsArray[j].getBeginReservation().isBefore(reservationsArray[j-1].getBeginReservation())){
+                    temp = reservationsArray[j-1];
+                    reservationsArray[j-1] = reservationsArray[j];
+                    reservationsArray[j] = temp;
+                }
+            }
+        }
+        List<Reservation> sortedReservations = new ArrayList<>();
+        sortedReservations.addAll(Arrays.asList(reservationsArray));
+        return sortedReservations;
     }
 
 }

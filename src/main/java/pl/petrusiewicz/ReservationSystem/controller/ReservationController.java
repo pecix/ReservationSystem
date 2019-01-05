@@ -29,6 +29,19 @@ public class ReservationController {
         return ResponseEntity.ok().body(reservationService.findAll(roomId));
     }
 
+    @GetMapping(value = "/reservations", params = "sort")
+    public ResponseEntity findAndSortAll(@PathVariable int roomId, @RequestParam boolean sort){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+        List<Reservation> reservations = reservationService.findAll(roomId);
+        if (sort){
+            return ResponseEntity.ok().body(reservationService.sort(reservations));
+        } else {
+            return ResponseEntity.ok().body(reservations);
+        }
+    }
+
     @GetMapping("/reservations/{id}")
     public ResponseEntity getById(@PathVariable int id){
         Reservation reservation = reservationService.findById(id);
@@ -59,8 +72,12 @@ public class ReservationController {
             return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
         }
 
-        reservationService.book(roomId, reservation);
-        return ResponseEntity.status(201).build();
+        if (reservationService.checkAvailability(roomId, reservation)){
+            reservationService.book(roomId, reservation);
+            return ResponseEntity.status(201).build();
+        } else {
+            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " jest zajęta w tym terminie");
+        }
     }
 
     @DeleteMapping(value = "/reservations", params = "name")
@@ -91,6 +108,16 @@ public class ReservationController {
         } else {
             return ResponseEntity.badRequest().body("Rezerwacja o ID: " + id + " nie istnieje");
         }
+    }
+
+    @DeleteMapping("/reservations")
+    public ResponseEntity cancelAll(@PathVariable int roomId){
+        if (!conferenceRoomService.existById(roomId)){
+            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+        }
+
+        reservationService.cancelAll(roomId);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/reservations/{id}")

@@ -49,6 +49,12 @@ public class OrganizationController {
         }
     }
 
+    @DeleteMapping
+    public ResponseEntity removeAll(){
+        service.removeAll();
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity remove(@PathVariable int id){
         if(service.existById(id)){

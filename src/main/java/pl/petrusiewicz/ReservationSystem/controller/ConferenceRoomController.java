@@ -68,6 +68,16 @@ public class ConferenceRoomController {
         return ResponseEntity.badRequest().body("Sala konferencyjna o nazwie " + conferenceRoom.getName() + " już istnieje.");
     }
 
+    @DeleteMapping("/rooms")
+    public ResponseEntity removeAll(@PathVariable int organizationId){
+        if (!organizationService.existById(organizationId)){
+            return ResponseEntity.badRequest().body("Organizacja o ID: " +  organizationId + " nie istnieje");
+        }
+
+        conferenceRoomService.removeAll(organizationId);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/rooms/{id}")
     public ResponseEntity remove(@PathVariable int organizationId, @PathVariable int id) {
         if (!organizationService.existById(organizationId)){
