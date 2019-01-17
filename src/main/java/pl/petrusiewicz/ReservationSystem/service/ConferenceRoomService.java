@@ -27,7 +27,7 @@ public class ConferenceRoomService {
     }
 
     public ConferenceRoom findByName(int organizationId, String conferenceRoomName){
-        List<ConferenceRoom> conferenceRooms = findAll(organizationId);
+        var conferenceRooms = findAll(organizationId);
         for (ConferenceRoom room: conferenceRooms){
             if(room.getName().equalsIgnoreCase(conferenceRoomName)){
                 return room;
@@ -41,8 +41,8 @@ public class ConferenceRoomService {
     }
 
     public boolean existByName(int organizationId, String conferenceRoomName){
-        List<ConferenceRoom> conferenceRooms = findAll(organizationId);
-        boolean exist = false;
+        var conferenceRooms = findAll(organizationId);
+        var exist = false;
         for (ConferenceRoom room: conferenceRooms){
             if(!exist && room.getName().equalsIgnoreCase(conferenceRoomName)){
                 exist=true;
@@ -52,23 +52,23 @@ public class ConferenceRoomService {
     }
 
     public void addConferenceRoom(int organizationId, ConferenceRoom conferenceRoom){
-        Organization organization = organizationRepository.findById(organizationId);
+        var organization = organizationRepository.findById(organizationId);
         conferenceRoomRepository.save(conferenceRoom);
         organization.getConferenceRooms().add(conferenceRoom);
         organizationRepository.save(organization);
     }
 
     public void remove(int organizationId, int id){
-        Organization organization = organizationRepository.findById(organizationId);
-        ConferenceRoom conferenceRoom = findById(id);
+        var organization = organizationRepository.findById(organizationId);
+        var conferenceRoom = findById(id);
         organization.getConferenceRooms().remove(conferenceRoom);
         conferenceRoomRepository.delete(conferenceRoom);
         organizationRepository.save(organization);
     }
 
     public void removeAll(int organizationId){
-        Organization organization = organizationRepository.findById(organizationId);
-        List<Integer> idList = new ArrayList<>();
+        var organization = organizationRepository.findById(organizationId);
+        var idList = new ArrayList<Integer>();
         for (ConferenceRoom room : organization.getConferenceRooms()) {
             idList.add(room.getId());
         }
@@ -80,7 +80,7 @@ public class ConferenceRoomService {
     }
 
     public void update(int id, ConferenceRoom newConferenceRoom){
-        ConferenceRoom conferenceRoom = findById(id);
+        var conferenceRoom = findById(id);
         if (conferenceRoom != null) {
             conferenceRoom.setName(newConferenceRoom.getName());
             conferenceRoom.setDescription(newConferenceRoom.getDescription());

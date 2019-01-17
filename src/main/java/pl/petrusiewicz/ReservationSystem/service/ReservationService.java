@@ -31,7 +31,7 @@ public class ReservationService {
     }
 
     public Reservation findFirstByName(int roomId, String reservingName){
-        List<Reservation> reservations = findAll(roomId);
+        var reservations = findAll(roomId);
         for(Reservation res: reservations){
             if (res.getReservingName().equalsIgnoreCase(reservingName)){
                 return res;
@@ -41,8 +41,8 @@ public class ReservationService {
     }
 
     public List<Reservation> findAllByName(int roomId, String reservingName){
-        List<Reservation> reservations = findAll(roomId);
-        List<Reservation> temp = new ArrayList<>();
+        var reservations = findAll(roomId);
+        var temp = new ArrayList<Reservation>();
         for (Reservation reservation: reservations){
             if (reservation.getReservingName().equalsIgnoreCase(reservingName)){
                 temp.add(reservation);
@@ -52,7 +52,7 @@ public class ReservationService {
     }
 
     public void book(int roomId, Reservation reservation){
-        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
+        var conferenceRoom = conferenceRoomRepository.findById(roomId);
         reservationRepository.save(reservation);
         conferenceRoom.getReservations().add(reservation);
 //        conferenceRoom.setAvailable(false);
@@ -60,8 +60,8 @@ public class ReservationService {
     }
 
     public void cancelAllByName(int roomId, String reservingName){
-        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
-        Reservation reservation = findFirstByName(roomId, reservingName);
+        var conferenceRoom = conferenceRoomRepository.findById(roomId);
+        var reservation = findFirstByName(roomId, reservingName);
         while (reservation != null){
             conferenceRoom.getReservations().remove(reservation);
             reservationRepository.deleteById(reservation.getId());
@@ -72,7 +72,7 @@ public class ReservationService {
     }
 
     public void cancelById(int roomId, int id){
-        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
+        var conferenceRoom = conferenceRoomRepository.findById(roomId);
         conferenceRoom.getReservations().remove(reservationRepository.findById(id));
 //        conferenceRoom.setAvailable(true);
         reservationRepository.deleteById(id);
@@ -80,8 +80,8 @@ public class ReservationService {
     }
 
     public void cancelAll(int roomId){
-        ConferenceRoom room = conferenceRoomRepository.findById(roomId);
-        List<Integer> idList = new ArrayList<>();
+        var room = conferenceRoomRepository.findById(roomId);
+        var idList = new ArrayList<Integer>();
         for (Reservation reservation: room.getReservations()){
             idList.add(reservation.getId());
         }
@@ -93,7 +93,7 @@ public class ReservationService {
     }
 
     public void update(int id, Reservation updatedReservation){
-        Reservation reservation = findById(id);
+        var reservation = findById(id);
         if (reservation != null) {
             reservation.setReservingName(updatedReservation.getReservingName());
             reservation.setBeginReservation(updatedReservation.getBeginReservation());
@@ -103,9 +103,9 @@ public class ReservationService {
     }
 
     public boolean checkAvailability(int roomId, Reservation reservation){
-        List<Reservation> reservations = findAll(roomId);
-        LocalDateTime start = reservation.getBeginReservation();
-        LocalDateTime end = reservation.getEndReservation();
+        var reservations = findAll(roomId);
+        var start = reservation.getBeginReservation();
+        var end = reservation.getEndReservation();
         for (Reservation res: reservations){
             if (start.isEqual(res.getBeginReservation()) || start.isEqual(res.getEndReservation())){
                 return false;
@@ -122,9 +122,9 @@ public class ReservationService {
     }
 
     public List<Reservation> sort(List<Reservation> reservations){
-        Reservation[] reservationsArray = new Reservation[reservations.size()];
+        var reservationsArray = new Reservation[reservations.size()];
         reservationsArray = reservations.toArray(reservationsArray);
-        Reservation temp;
+        var temp = new Reservation();
         for (int i=0; i<reservationsArray.length; i++){
             for (int j=1; j<reservationsArray.length; j++){
                 if (reservationsArray[j].getBeginReservation().isBefore(reservationsArray[j-1].getBeginReservation())){
@@ -134,7 +134,7 @@ public class ReservationService {
                 }
             }
         }
-        List<Reservation> sortedReservations = new ArrayList<>();
+        var sortedReservations = new ArrayList<Reservation>();
         sortedReservations.addAll(Arrays.asList(reservationsArray));
         return sortedReservations;
     }

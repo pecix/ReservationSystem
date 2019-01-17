@@ -3,6 +3,7 @@ package pl.petrusiewicz.ReservationSystem.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.petrusiewicz.ReservationSystem.model.ErrorMessage;
 import pl.petrusiewicz.ReservationSystem.model.Organization;
 import pl.petrusiewicz.ReservationSystem.service.OrganizationService;
 
@@ -25,16 +26,16 @@ public class OrganizationController {
         if (service.existById(id)) {
             return ResponseEntity.ok(service.findById(id));
         } else {
-            return ResponseEntity.badRequest().body("Organizacja o ID: " + id + " nie istnieje");
+            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
         }
     }
 
     @GetMapping(params = "name")
-    public ResponseEntity findByName(@RequestParam String name){
+    public ResponseEntity findByName(@RequestParam String name) {
         if (service.existByName(name)) {
             return ResponseEntity.ok(service.findByName(name));
         } else {
-            return ResponseEntity.badRequest().body("Nie ma organizacji o nazwie " + name);
+            return ResponseEntity.status(406).body(new ErrorMessage("Nie ma organizacji o nazwie " + name));
         }
     }
 
@@ -45,36 +46,35 @@ public class OrganizationController {
             service.add(organization);
             return ResponseEntity.status(201).body(organization);
         } else {
-            return ResponseEntity.badRequest().body("Organizacja " + organization.getName() + " już istnieje");
+            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja " + organization.getName() + " już istnieje"));
         }
     }
 
     @DeleteMapping
-    public ResponseEntity removeAll(){
+    public ResponseEntity removeAll() {
         service.removeAll();
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity remove(@PathVariable int id){
-        if(service.existById(id)){
+    public ResponseEntity remove(@PathVariable int id) {
+        if (service.existById(id)) {
             service.remove(id);
             return ResponseEntity.status(200).build();
         } else {
-            return ResponseEntity.badRequest().body("Organizacja o ID: " + id + " nie istnieje");
+            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Organization organization){
-        if (service.existById(id)){
+    public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Organization organization) {
+        if (service.existById(id)) {
             service.update(id, organization);
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.badRequest().body("Organizacja o ID: " + id + " nie istnieje");
+            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
         }
     }
-
 
 
 }
