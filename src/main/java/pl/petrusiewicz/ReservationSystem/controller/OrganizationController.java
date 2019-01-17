@@ -43,7 +43,7 @@ public class OrganizationController {
         organization.setName(organization.getName().trim());
         if (!service.existByName(organization.getName())) {
             service.add(organization);
-            return ResponseEntity.status(201).build();
+            return ResponseEntity.status(201).body(organization);
         } else {
             return ResponseEntity.badRequest().body("Organizacja " + organization.getName() + " już istnieje");
         }
