@@ -34,7 +34,7 @@ public class ConferenceRoomController {
             return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
         }
 
-        ConferenceRoom conferenceRoom = conferenceRoomService.findById(id);
+        var conferenceRoom = conferenceRoomService.findById(id);
         if (conferenceRoom != null) {
             return ResponseEntity.ok().body(conferenceRoom);
         } else {
@@ -48,7 +48,7 @@ public class ConferenceRoomController {
             return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
         }
 
-        ConferenceRoom conferenceRoom = conferenceRoomService.findByName(organizationId, name);
+        var conferenceRoom = conferenceRoomService.findByName(organizationId, name);
         if (conferenceRoom != null) {
             return ResponseEntity.ok().body(conferenceRoom);
         } else {
@@ -87,7 +87,7 @@ public class ConferenceRoomController {
             return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " +  organizationId + " nie istnieje"));
         }
 
-        ConferenceRoom conferenceRoom = conferenceRoomService.findById(id);
+        var conferenceRoom = conferenceRoomService.findById(id);
         if (conferenceRoom != null) {
             conferenceRoomService.remove(organizationId, id);
             return ResponseEntity.ok().build();
@@ -102,7 +102,7 @@ public class ConferenceRoomController {
             return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " +  organizationId + " nie istnieje"));
         }
 
-        ConferenceRoom conferenceRoom = conferenceRoomService.findById(id);
+        var conferenceRoom = conferenceRoomService.findById(id);
         if (conferenceRoom != null) {
             conferenceRoomService.update(id, updatedConferenceRoom);
             return ResponseEntity.ok().build();

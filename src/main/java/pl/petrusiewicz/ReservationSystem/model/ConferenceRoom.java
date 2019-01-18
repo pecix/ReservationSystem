@@ -24,7 +24,7 @@ public class ConferenceRoom {
     @Min(0)
     @Max(10)
     private int floor;
-    private boolean available = true;
+//    private boolean available = true;
     private int numberOfSeats;
     private int numberOfStandingPlaces;
     private int numberOfLyingPlaces;

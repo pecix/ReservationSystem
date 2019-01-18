@@ -9,12 +9,16 @@ import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
 import pl.petrusiewicz.ReservationSystem.repository.ReservationRepository;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class ReservationService {
+
+    private static final int MIN_BOOKING_TIME = 5;
+    private static final int MAX_BOOKING_TIME = 120;
 
     @Autowired
     ReservationRepository reservationRepository;
@@ -51,12 +55,23 @@ public class ReservationService {
         return temp;
     }
 
+    public boolean checkTimeLimits(Reservation reservation){
+        var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
+        var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
+        var minutesBetween = ChronoUnit.MINUTES.between(begin, end);
+        return begin.isBefore(end) && minutesBetween > MIN_BOOKING_TIME && minutesBetween < MAX_BOOKING_TIME;
+    }
+
     public void book(int roomId, Reservation reservation){
+        var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
+        var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
+        reservation.setBeginReservation(begin);
+        reservation.setEndReservation(end);
         var conferenceRoom = conferenceRoomRepository.findById(roomId);
         reservationRepository.save(reservation);
         conferenceRoom.getReservations().add(reservation);
-//        conferenceRoom.setAvailable(false);
         conferenceRoomRepository.save(conferenceRoom);
+
     }
 
     public void cancelAllByName(int roomId, String reservingName){
@@ -67,14 +82,12 @@ public class ReservationService {
             reservationRepository.deleteById(reservation.getId());
             reservation = findFirstByName(roomId, reservingName);
         }
-//        conferenceRoom.setAvailable(true);
         conferenceRoomRepository.save(conferenceRoom);
     }
 
     public void cancelById(int roomId, int id){
         var conferenceRoom = conferenceRoomRepository.findById(roomId);
         conferenceRoom.getReservations().remove(reservationRepository.findById(id));
-//        conferenceRoom.setAvailable(true);
         reservationRepository.deleteById(id);
         conferenceRoomRepository.save(conferenceRoom);
     }

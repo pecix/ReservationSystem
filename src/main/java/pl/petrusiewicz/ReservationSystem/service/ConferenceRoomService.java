@@ -9,6 +9,7 @@ import pl.petrusiewicz.ReservationSystem.repository.OrganizationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ConferenceRoomService {
@@ -85,7 +86,6 @@ public class ConferenceRoomService {
             conferenceRoom.setName(newConferenceRoom.getName());
             conferenceRoom.setDescription(newConferenceRoom.getDescription());
             conferenceRoom.setFloor(newConferenceRoom.getFloor());
-            conferenceRoom.setAvailable(newConferenceRoom.isAvailable());
             conferenceRoom.setNumberOfSeats(newConferenceRoom.getNumberOfSeats());
             conferenceRoom.setNumberOfStandingPlaces(newConferenceRoom.getNumberOfStandingPlaces());
             conferenceRoom.setNumberOfLyingPlaces(newConferenceRoom.getNumberOfLyingPlaces());

@@ -29,7 +29,7 @@ public class TelephoneController {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone telephone = telephoneService.get(roomId);
+        var telephone = telephoneService.get(roomId);
         if (telephone != null) {
             return ResponseEntity.ok().body(telephone);
         } else {
@@ -43,7 +43,7 @@ public class TelephoneController {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone tel = telephoneService.get(roomId);
+        var tel = telephoneService.get(roomId);
         if (tel == null) {
             telephoneService.add(roomId, telephone);
             return ResponseEntity.status(201).body(telephone);
@@ -58,7 +58,7 @@ public class TelephoneController {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone telephone = telephoneService.get(roomId);
+        var telephone = telephoneService.get(roomId);
         if (telephone != null) {
             telephoneService.remove(roomId);
             return ResponseEntity.ok().build();
@@ -73,7 +73,7 @@ public class TelephoneController {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone telephone = telephoneService.get(roomId);
+        var telephone = telephoneService.get(roomId);
         if (telephone != null) {
             telephoneService.update(roomId, updatedTelephone);
             return ResponseEntity.ok().build();

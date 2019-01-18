@@ -35,7 +35,7 @@ public class ReservationController {
         if (!conferenceRoomService.existById(roomId)) {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
-        List<Reservation> reservations = reservationService.findAll(roomId);
+        var reservations = reservationService.findAll(roomId);
         if (sort) {
             return ResponseEntity.ok().body(reservationService.sort(reservations));
         } else {
@@ -45,7 +45,7 @@ public class ReservationController {
 
     @GetMapping("/reservations/{id}")
     public ResponseEntity getById(@PathVariable int id) {
-        Reservation reservation = reservationService.findById(id);
+        var reservation = reservationService.findById(id);
         if (reservation != null) {
             return ResponseEntity.ok().body(reservation);
         } else {
@@ -59,7 +59,7 @@ public class ReservationController {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        List<Reservation> reservations = reservationService.findAllByName(roomId, name);
+        var reservations = reservationService.findAllByName(roomId, name);
         if (!reservations.isEmpty()) {
             return ResponseEntity.ok().body(reservations);
         } else {
@@ -71,6 +71,10 @@ public class ReservationController {
     public ResponseEntity book(@PathVariable int roomId, @Valid @RequestBody Reservation reservation) {
         if (!conferenceRoomService.existById(roomId)) {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
+        }
+
+        if(!reservationService.checkTimeLimits(reservation)){
+            return ResponseEntity.status(406).body(new ErrorMessage("Rezerwacja powinna mieć minimum 5 min, a maksymalnie 120 min"));
         }
 
         if (reservationService.checkAvailability(roomId, reservation)) {
@@ -87,7 +91,7 @@ public class ReservationController {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        List<Reservation> reservations = reservationService.findAllByName(roomId, name);
+        var reservations = reservationService.findAllByName(roomId, name);
         if (!reservations.isEmpty()) {
             reservationService.cancelAllByName(roomId, name);
             return ResponseEntity.ok().build();
@@ -102,7 +106,7 @@ public class ReservationController {
             return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Reservation reservation = reservationService.findById(id);
+        var reservation = reservationService.findById(id);
         if (reservation != null) {
             reservationService.cancelById(roomId, id);
             return ResponseEntity.ok().build();
@@ -123,7 +127,7 @@ public class ReservationController {
 
     @PutMapping("/reservations/{id}")
     public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Reservation updatedReservation) {
-        Reservation reservation = reservationService.findById(id);
+        var reservation = reservationService.findById(id);
         if (reservation != null) {
             reservationService.update(id, updatedReservation);
             return ResponseEntity.ok().build();
