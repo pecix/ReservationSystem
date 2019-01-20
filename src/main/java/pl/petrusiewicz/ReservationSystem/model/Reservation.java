@@ -1,11 +1,14 @@
 package pl.petrusiewicz.ReservationSystem.model;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 public class Reservation {
 
@@ -21,38 +24,4 @@ public class Reservation {
     @Future
     private LocalDateTime endReservation;
 
-    //===============================================
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getReservingName() {
-        return reservingName;
-    }
-
-    public void setReservingName(String reservingName) {
-        this.reservingName = reservingName;
-    }
-
-    public LocalDateTime getBeginReservation() {
-        return beginReservation;
-    }
-
-    public void setBeginReservation(LocalDateTime beginReservation) {
-        this.beginReservation = beginReservation;
-    }
-
-    public LocalDateTime getEndReservation() {
-        return endReservation;
-    }
-
-    public void setEndReservation(LocalDateTime endReservation) {
-        this.endReservation = endReservation;
-    }
 }

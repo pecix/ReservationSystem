@@ -1,7 +1,11 @@
 package pl.petrusiewicz.ReservationSystem.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 import pl.petrusiewicz.ReservationSystem.model.Telephone;
 
-public interface TelephoneRepository extends CrudRepository<Telephone, Integer> {
+@Repository
+public interface TelephoneRepository extends JpaRepository<Telephone, Integer> {
+
 }

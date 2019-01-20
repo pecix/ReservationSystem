@@ -1,5 +1,7 @@
 package pl.petrusiewicz.ReservationSystem.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -7,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
 public class Organization {
 
@@ -20,30 +23,6 @@ public class Organization {
     @OneToMany
     private List<ConferenceRoom> conferenceRooms;
 
-    //====================================================
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<ConferenceRoom> getConferenceRooms() {
-        return conferenceRooms;
-    }
-
-    public void setConferenceRooms(List<ConferenceRoom> conferenceRooms) {
-        this.conferenceRooms = conferenceRooms;
-    }
 }
+
+
