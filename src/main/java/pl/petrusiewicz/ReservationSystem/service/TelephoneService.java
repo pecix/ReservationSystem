@@ -22,14 +22,14 @@ public class TelephoneService {
 
     public void add(int roomId, Telephone telephone){
         telephoneRepository.save(telephone);
-        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
+        var conferenceRoom = conferenceRoomRepository.findById(roomId);
         conferenceRoom.setHaveTelephone(true);
         conferenceRoom.setTelephone(telephone);
         conferenceRoomRepository.save(conferenceRoom);
     }
 
     public void remove(int roomId){
-        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId);
+        var conferenceRoom = conferenceRoomRepository.findById(roomId);
         int id = conferenceRoom.getTelephone().getId();
         conferenceRoom.setHaveTelephone(false);
         conferenceRoom.setTelephone(null);
@@ -38,7 +38,7 @@ public class TelephoneService {
     }
 
     public void update(int roomId, Telephone updateTelephone){
-        Telephone telephone = conferenceRoomRepository.findById(roomId).getTelephone();
+        var telephone = conferenceRoomRepository.findById(roomId).getTelephone();
         if (telephone != null) {
             telephone.setInternalNumber(updateTelephone.getInternalNumber());
             telephone.setExternalNumber(updateTelephone.getExternalNumber());

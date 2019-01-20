@@ -3,6 +3,7 @@ package pl.petrusiewicz.ReservationSystem.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.petrusiewicz.ReservationSystem.model.ErrorMessage;
 import pl.petrusiewicz.ReservationSystem.model.Telephone;
 import pl.petrusiewicz.ReservationSystem.service.ConferenceRoomService;
 import pl.petrusiewicz.ReservationSystem.service.OrganizationService;
@@ -23,61 +24,61 @@ public class TelephoneController {
 
 
     @GetMapping("/telephones")
-    public ResponseEntity get(@PathVariable int roomId){
-        if (!conferenceRoomService.existById(roomId)){
-            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+    public ResponseEntity get(@PathVariable int roomId) {
+        if (!conferenceRoomService.existById(roomId)) {
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone telephone = telephoneService.get(roomId);
-        if (telephone != null){
+        var telephone = telephoneService.get(roomId);
+        if (telephone != null) {
             return ResponseEntity.ok().body(telephone);
         } else {
-            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu.");
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu."));
         }
     }
 
     @PostMapping("/telephones")
-    public ResponseEntity add(@PathVariable int roomId, @Valid @RequestBody Telephone telephone){
-        if (!conferenceRoomService.existById(roomId)){
-            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+    public ResponseEntity add(@PathVariable int roomId, @Valid @RequestBody Telephone telephone) {
+        if (!conferenceRoomService.existById(roomId)) {
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone tel = telephoneService.get(roomId);
-        if (tel == null){
+        var tel = telephoneService.get(roomId);
+        if (tel == null) {
             telephoneService.add(roomId, telephone);
-            return ResponseEntity.status(201).build();
+            return ResponseEntity.status(201).body(telephone);
         } else {
-            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " posiada już telefon.");
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " posiada już telefon."));
         }
     }
 
     @DeleteMapping("/telephones")
-    public ResponseEntity remove(@PathVariable int roomId){
-        if (!conferenceRoomService.existById(roomId)){
-            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+    public ResponseEntity remove(@PathVariable int roomId) {
+        if (!conferenceRoomService.existById(roomId)) {
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone telephone = telephoneService.get(roomId);
-        if (telephone != null){
+        var telephone = telephoneService.get(roomId);
+        if (telephone != null) {
             telephoneService.remove(roomId);
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu.");
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu."));
         }
     }
 
     @PutMapping("/telephones")
-    public ResponseEntity update(@PathVariable int roomId, @Valid @RequestBody Telephone updatedTelephone){
-        if (!conferenceRoomService.existById(roomId)){
-            return ResponseEntity.badRequest().body("Sala konferencyjna o ID: " + roomId + " nie istnieje");
+    public ResponseEntity update(@PathVariable int roomId, @Valid @RequestBody Telephone updatedTelephone) {
+        if (!conferenceRoomService.existById(roomId)) {
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        Telephone telephone = telephoneService.get(roomId);
-        if (telephone != null){
+        var telephone = telephoneService.get(roomId);
+        if (telephone != null) {
             telephoneService.update(roomId, updatedTelephone);
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.badRequest().body("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu.");
+            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna " + conferenceRoomService.findById(roomId).getName() + " nie posiada telefonu."));
         }
     }
 }

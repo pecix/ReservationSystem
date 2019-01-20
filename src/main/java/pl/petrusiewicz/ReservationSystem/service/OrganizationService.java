@@ -47,7 +47,7 @@ public class OrganizationService {
     }
 
     public void update(int id, Organization newOrganization) {
-        Organization organization = findById(id);
+        var organization = findById(id);
         if (organization != null) {
             organization.setName(newOrganization.getName());
             repository.save(organization);
