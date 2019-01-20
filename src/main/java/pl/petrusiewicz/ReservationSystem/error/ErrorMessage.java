@@ -1,4 +1,4 @@
-package pl.petrusiewicz.ReservationSystem.model;
+package pl.petrusiewicz.ReservationSystem.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

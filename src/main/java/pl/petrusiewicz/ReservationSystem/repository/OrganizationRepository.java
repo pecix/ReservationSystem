@@ -1,18 +1,20 @@
 package pl.petrusiewicz.ReservationSystem.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import pl.petrusiewicz.ReservationSystem.model.Organization;
+import pl.petrusiewicz.ReservationSystem.entity.OrganizationEntity;
 
 import java.util.List;
 
 @Repository
-public interface OrganizationRepository extends JpaRepository<Organization, Integer> {
+public interface OrganizationRepository extends JpaRepository<OrganizationEntity, Integer> {
 
-    Organization findByName(String name);
-    Organization findById(int id);
-    boolean existsByName (String name);
-    List<Organization> findAll();
+    OrganizationEntity findByName(String name);
+
+    OrganizationEntity findById(int id);
+
+    boolean existsByName(String name);
+
+    List<OrganizationEntity> findAll();
 
 }

@@ -3,7 +3,7 @@ package pl.petrusiewicz.ReservationSystem.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.petrusiewicz.ReservationSystem.model.ErrorMessage;
+import pl.petrusiewicz.ReservationSystem.error.ErrorMessage;
 import pl.petrusiewicz.ReservationSystem.model.Organization;
 import pl.petrusiewicz.ReservationSystem.service.OrganizationService;
 
@@ -26,7 +26,7 @@ public class OrganizationController {
         if (service.existById(id)) {
             return ResponseEntity.ok(service.findById(id));
         } else {
-            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
+            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
         }
     }
 
@@ -35,7 +35,7 @@ public class OrganizationController {
         if (service.existByName(name)) {
             return ResponseEntity.ok(service.findByName(name));
         } else {
-            return ResponseEntity.status(406).body(new ErrorMessage("Nie ma organizacji o nazwie " + name));
+            return ResponseEntity.status(404).body(new ErrorMessage("Organizacjia o nazwie " + name + " nie istnieje"));
         }
     }
 
@@ -43,8 +43,7 @@ public class OrganizationController {
     public ResponseEntity add(@Valid @RequestBody Organization organization) {
         organization.setName(organization.getName().trim());
         if (!service.existByName(organization.getName())) {
-            service.add(organization);
-            return ResponseEntity.status(201).body(organization);
+            return ResponseEntity.status(201).body(service.add(organization));
         } else {
             return ResponseEntity.status(406).body(new ErrorMessage("Organizacja " + organization.getName() + " już istnieje"));
         }
@@ -62,7 +61,7 @@ public class OrganizationController {
             service.remove(id);
             return ResponseEntity.status(200).build();
         } else {
-            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
+            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
         }
     }
 
@@ -72,7 +71,7 @@ public class OrganizationController {
             service.update(id, organization);
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
+            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
         }
     }
 

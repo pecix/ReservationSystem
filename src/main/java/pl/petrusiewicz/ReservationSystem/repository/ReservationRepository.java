@@ -1,15 +1,13 @@
 package pl.petrusiewicz.ReservationSystem.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import pl.petrusiewicz.ReservationSystem.model.Reservation;
+import pl.petrusiewicz.ReservationSystem.entity.ReservationEntity;
 
-import java.util.List;
 
 @Repository
-public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
+public interface ReservationRepository extends JpaRepository<ReservationEntity, Integer> {
 
-    Reservation findById(int id);
+    ReservationEntity findById(int id);
 
 }

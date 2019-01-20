@@ -1,19 +1,13 @@
 package pl.petrusiewicz.ReservationSystem.model;
 
 import lombok.Data;
+import pl.petrusiewicz.ReservationSystem.entity.ConferenceRoomEntity;
 
-import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.util.HashSet;
-import java.util.List;
 
 @Data
-@Entity
 public class ConferenceRoom {
 
-    @Id
-    @GeneratedValue
-    private int id;
     @NotNull
     @NotBlank
     @Size(min = 2, max = 20)
@@ -24,16 +18,25 @@ public class ConferenceRoom {
     @Min(0)
     @Max(10)
     private int floor;
-//    private boolean available = true;
     private int numberOfSeats;
     private int numberOfStandingPlaces;
     private int numberOfLyingPlaces;
     private int numberOfHangingPlaces;
     private String projectorName;
     private boolean haveTelephone;
-    @OneToOne
-    private Telephone telephone;
-    @OneToMany
-    private List<Reservation> reservations;
 
+
+    public ConferenceRoomEntity convertToEntity() {
+        var conferenceRoomEntity = new ConferenceRoomEntity();
+        conferenceRoomEntity.setName(name);
+        conferenceRoomEntity.setDescription(description);
+        conferenceRoomEntity.setFloor(floor);
+        conferenceRoomEntity.setNumberOfSeats(numberOfSeats);
+        conferenceRoomEntity.setNumberOfStandingPlaces(numberOfStandingPlaces);
+        conferenceRoomEntity.setNumberOfLyingPlaces(numberOfLyingPlaces);
+        conferenceRoomEntity.setNumberOfHangingPlaces(numberOfHangingPlaces);
+        conferenceRoomEntity.setProjectorName(projectorName);
+        conferenceRoomEntity.setHaveTelephone(haveTelephone);
+        return conferenceRoomEntity;
+    }
 }

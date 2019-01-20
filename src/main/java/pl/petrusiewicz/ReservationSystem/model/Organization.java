@@ -1,27 +1,25 @@
 package pl.petrusiewicz.ReservationSystem.model;
 
 import lombok.Data;
+import pl.petrusiewicz.ReservationSystem.entity.OrganizationEntity;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
-@Entity
 public class Organization {
 
-    @Id
-    @GeneratedValue
-    private int id;
     @NotNull
     @Size(min = 2, max = 20)
     @NotBlank
     private String name;
-    @OneToMany
-    private List<ConferenceRoom> conferenceRooms;
+
+    public OrganizationEntity convertToEntity() {
+        var organizationEntity = new OrganizationEntity();
+        organizationEntity.setName(name);
+        return organizationEntity;
+    }
 
 }
 
