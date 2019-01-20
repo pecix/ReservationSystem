@@ -7,7 +7,9 @@ import pl.petrusiewicz.ReservationSystem.model.Organization;
 import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
 import pl.petrusiewicz.ReservationSystem.repository.OrganizationRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ConferenceRoomService {
@@ -16,24 +18,17 @@ public class ConferenceRoomService {
     OrganizationRepository organizationRepository;
     @Autowired
     ConferenceRoomRepository conferenceRoomRepository;
-    @Autowired
-    OrganizationService organizationService;
 
-    public List<ConferenceRoom> getAll(String organizationName){
-
-        return organizationService.findByName(organizationName).getConferenceRooms();
+    public List<ConferenceRoom> findAll(int organizationId){
+        return organizationRepository.findById(organizationId).getConferenceRooms();
     }
 
-    public ConferenceRoom getById(int id){
-        if(conferenceRoomRepository.findById(id).isPresent()){
-            return conferenceRoomRepository.findById(id).get();
-        } else {
-            return null;
-        }
+    public ConferenceRoom findById(int id){
+        return conferenceRoomRepository.findById(id);
     }
 
-    public ConferenceRoom findByName(String organizationName, String conferenceRoomName){
-        List<ConferenceRoom> conferenceRooms = getAll(organizationName);
+    public ConferenceRoom findByName(int organizationId, String conferenceRoomName){
+        var conferenceRooms = findAll(organizationId);
         for (ConferenceRoom room: conferenceRooms){
             if(room.getName().equalsIgnoreCase(conferenceRoomName)){
                 return room;
@@ -42,30 +37,62 @@ public class ConferenceRoomService {
         return null;
     }
 
-    public boolean isExist(String organizationName, ConferenceRoom conferenceRoom){
-        List<ConferenceRoom> conferenceRooms = getAll(organizationName);
-        boolean exist = false;
+    public boolean existById(int id){
+        return conferenceRoomRepository.existsById(id);
+    }
+
+    public boolean existByName(int organizationId, String conferenceRoomName){
+        var conferenceRooms = findAll(organizationId);
+        var exist = false;
         for (ConferenceRoom room: conferenceRooms){
-            if(!exist && room.getName().equalsIgnoreCase(conferenceRoom.getName())){
+            if(!exist && room.getName().equalsIgnoreCase(conferenceRoomName)){
                 exist=true;
             }
         }
         return exist;
     }
 
-    public void addConferenceRoom(String organizationName, ConferenceRoom conferenceRoom){
-        Organization organization = organizationService.findByName(organizationName);
+    public void addConferenceRoom(int organizationId, ConferenceRoom conferenceRoom){
+        var organization = organizationRepository.findById(organizationId);
         conferenceRoomRepository.save(conferenceRoom);
         organization.getConferenceRooms().add(conferenceRoom);
         organizationRepository.save(organization);
     }
 
-    public void removeConferenceRoomByName(String organizationName, String conferenceRoomName){
-        Organization organization = organizationService.findByName(organizationName);
-        ConferenceRoom conferenceRoom = findByName(organizationName, conferenceRoomName);
+    public void remove(int organizationId, int id){
+        var organization = organizationRepository.findById(organizationId);
+        var conferenceRoom = findById(id);
         organization.getConferenceRooms().remove(conferenceRoom);
         conferenceRoomRepository.delete(conferenceRoom);
         organizationRepository.save(organization);
+    }
+
+    public void removeAll(int organizationId){
+        var organization = organizationRepository.findById(organizationId);
+        var idList = new ArrayList<Integer>();
+        for (ConferenceRoom room : organization.getConferenceRooms()) {
+            idList.add(room.getId());
+        }
+        organization.getConferenceRooms().clear();
+        organizationRepository.save(organization);
+        for(Integer id: idList){
+            conferenceRoomRepository.deleteById(id);
+        }
+    }
+
+    public void update(int id, ConferenceRoom newConferenceRoom){
+        var conferenceRoom = findById(id);
+        if (conferenceRoom != null) {
+            conferenceRoom.setName(newConferenceRoom.getName());
+            conferenceRoom.setDescription(newConferenceRoom.getDescription());
+            conferenceRoom.setFloor(newConferenceRoom.getFloor());
+            conferenceRoom.setNumberOfSeats(newConferenceRoom.getNumberOfSeats());
+            conferenceRoom.setNumberOfStandingPlaces(newConferenceRoom.getNumberOfStandingPlaces());
+            conferenceRoom.setNumberOfLyingPlaces(newConferenceRoom.getNumberOfLyingPlaces());
+            conferenceRoom.setNumberOfHangingPlaces(newConferenceRoom.getNumberOfHangingPlaces());
+            conferenceRoom.setProjectorName(newConferenceRoom.getProjectorName());
+            conferenceRoomRepository.save(conferenceRoom);
+        }
     }
 
 }
