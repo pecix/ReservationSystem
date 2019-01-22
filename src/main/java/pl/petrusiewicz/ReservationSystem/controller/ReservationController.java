@@ -72,7 +72,7 @@ public class ReservationController {
             return ResponseEntity.status(404).body(new ErrorMessage("Sala konferencyjna o ID: " + roomId + " nie istnieje"));
         }
 
-        if (!reservationService.checkTimeLimits(reservation)) {
+        if (!reservationService.checkTimeRestriction(reservation)) {
             return ResponseEntity.status(406).body(new ErrorMessage("Rezerwacja powinna mieć minimum 5 min, a maksymalnie 120 min"));
         }
 

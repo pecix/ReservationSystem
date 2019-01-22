@@ -11,8 +11,9 @@ import pl.petrusiewicz.ReservationSystem.repository.ReservationRepository;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -30,28 +31,14 @@ public class ReservationService {
         return reservationRepository.findById(id);
     }
 
-    public ReservationEntity findFirstByName(int roomId, String reservingName) {
-        var reservations = findAll(roomId);
-        for (ReservationEntity res : reservations) {
-            if (res.getReservingName().equalsIgnoreCase(reservingName)) {
-                return res;
-            }
-        }
-        return null;
-    }
-
     public List<ReservationEntity> findAllByName(int roomId, String reservingName) {
         var reservations = findAll(roomId);
-        var temp = new ArrayList<ReservationEntity>();
-        for (ReservationEntity reservation : reservations) {
-            if (reservation.getReservingName().equalsIgnoreCase(reservingName)) {
-                temp.add(reservation);
-            }
-        }
-        return temp;
+        return reservations.stream()
+                .filter(res -> res.getReservingName().equalsIgnoreCase(reservingName))
+                .collect(Collectors.toList());
     }
 
-    public boolean checkTimeLimits(Reservation reservation) {
+    public boolean checkTimeRestriction(Reservation reservation) {
         var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
         var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
         var minutesBetween = ChronoUnit.MINUTES.between(begin, end);
@@ -73,13 +60,10 @@ public class ReservationService {
 
     public void cancelAllByName(int roomId, String reservingName) {
         var conferenceRoom = conferenceRoomRepository.findById(roomId);
-        var reservation = findFirstByName(roomId, reservingName);
-        while (reservation != null) {
-            conferenceRoom.getReservations().remove(reservation);
-            reservationRepository.deleteById(reservation.getId());
-            reservation = findFirstByName(roomId, reservingName);
-        }
+        var reservations = findAllByName(roomId, reservingName);
+        conferenceRoom.getReservations().removeAll(reservations);
         conferenceRoomRepository.save(conferenceRoom);
+        reservationRepository.deleteAll(reservations);
     }
 
     public void cancelById(int roomId, int id) {
@@ -92,14 +76,10 @@ public class ReservationService {
     public void cancelAll(int roomId) {
         var room = conferenceRoomRepository.findById(roomId);
         var idList = new ArrayList<Integer>();
-        for (ReservationEntity reservation : room.getReservations()) {
-            idList.add(reservation.getId());
-        }
+        room.getReservations().forEach(res -> idList.add(res.getId()));
         room.getReservations().clear();
         conferenceRoomRepository.save(room);
-        for (Integer id : idList) {
-            reservationRepository.deleteById(id);
-        }
+        idList.forEach(id -> reservationRepository.deleteById(id));
     }
 
     public void update(int id, Reservation updatedReservation) {
@@ -114,39 +94,25 @@ public class ReservationService {
 
     public boolean checkAvailability(int roomId, Reservation reservation) {
         var reservations = findAll(roomId);
-        var start = reservation.getBeginReservation();
-        var end = reservation.getEndReservation();
+        var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
+        var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
         for (ReservationEntity res : reservations) {
-            if (start.isEqual(res.getBeginReservation()) || start.isEqual(res.getEndReservation())) {
+            if (begin.isEqual(res.getBeginReservation()) || begin.isEqual(res.getEndReservation())) {
                 return false;
             } else if (end.isEqual(res.getBeginReservation()) || end.isEqual(res.getEndReservation())) {
                 return false;
-            } else if (start.isAfter(res.getBeginReservation()) && start.isBefore(res.getEndReservation())) {
+            } else if (begin.isAfter(res.getBeginReservation()) && begin.isBefore(res.getEndReservation())) {
                 return false;
             } else if (end.isAfter(res.getBeginReservation()) && end.isBefore(res.getEndReservation())) {
                 return false;
             }
         }
-
         return true;
     }
 
     public List<ReservationEntity> sort(List<ReservationEntity> reservations) {
-        var reservationsArray = new ReservationEntity[reservations.size()];
-        reservationsArray = reservations.toArray(reservationsArray);
-        var temp = new ReservationEntity();
-        for (int i = 0; i < reservationsArray.length; i++) {
-            for (int j = 1; j < reservationsArray.length; j++) {
-                if (reservationsArray[j].getBeginReservation().isBefore(reservationsArray[j - 1].getBeginReservation())) {
-                    temp = reservationsArray[j - 1];
-                    reservationsArray[j - 1] = reservationsArray[j];
-                    reservationsArray[j] = temp;
-                }
-            }
-        }
-        var sortedReservations = new ArrayList<ReservationEntity>();
-        sortedReservations.addAll(Arrays.asList(reservationsArray));
-        return sortedReservations;
+        reservations.sort(Comparator.comparing(ReservationEntity::getBeginReservation));
+        return reservations;
     }
 
 }
