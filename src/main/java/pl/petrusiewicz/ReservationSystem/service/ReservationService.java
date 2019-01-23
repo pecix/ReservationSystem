@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,18 +97,11 @@ public class ReservationService {
         var reservations = findAll(roomId);
         var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
         var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
-        for (ReservationEntity res : reservations) {
-            if (begin.isEqual(res.getBeginReservation()) || begin.isEqual(res.getEndReservation())) {
-                return false;
-            } else if (end.isEqual(res.getBeginReservation()) || end.isEqual(res.getEndReservation())) {
-                return false;
-            } else if (begin.isAfter(res.getBeginReservation()) && begin.isBefore(res.getEndReservation())) {
-                return false;
-            } else if (end.isAfter(res.getBeginReservation()) && end.isBefore(res.getEndReservation())) {
-                return false;
-            }
-        }
-        return true;
+        Predicate<ReservationEntity> predicate = res -> begin.isEqual(res.getBeginReservation()) || begin.isEqual(res.getEndReservation()) ||
+                end.isEqual(res.getBeginReservation()) || end.isEqual(res.getEndReservation()) ||
+                begin.isAfter(res.getBeginReservation()) && begin.isBefore(res.getEndReservation()) ||
+                end.isAfter(res.getBeginReservation()) && end.isBefore(res.getEndReservation());
+        return reservations.stream().noneMatch(predicate);
     }
 
     public List<ReservationEntity> sort(List<ReservationEntity> reservations) {
