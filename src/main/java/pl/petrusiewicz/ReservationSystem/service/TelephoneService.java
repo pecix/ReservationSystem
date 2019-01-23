@@ -1,6 +1,5 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.petrusiewicz.ReservationSystem.entity.TelephoneEntity;
 import pl.petrusiewicz.ReservationSystem.model.Telephone;
@@ -11,10 +10,13 @@ import pl.petrusiewicz.ReservationSystem.repository.TelephoneRepository;
 @Service
 public class TelephoneService {
 
-    @Autowired
-    TelephoneRepository telephoneRepository;
-    @Autowired
-    ConferenceRoomRepository conferenceRoomRepository;
+    private final ConferenceRoomRepository conferenceRoomRepository;
+    private final TelephoneRepository telephoneRepository;
+
+    public TelephoneService(ConferenceRoomRepository conferenceRoomRepository, TelephoneRepository telephoneRepository){
+        this.conferenceRoomRepository = conferenceRoomRepository;
+        this.telephoneRepository = telephoneRepository;
+    }
 
     public TelephoneEntity get(int roomId) {
         return conferenceRoomRepository.findById(roomId).getTelephone();

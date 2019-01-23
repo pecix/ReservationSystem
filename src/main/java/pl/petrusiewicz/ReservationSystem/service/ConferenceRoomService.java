@@ -1,6 +1,5 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.petrusiewicz.ReservationSystem.entity.ConferenceRoomEntity;
 import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
@@ -13,14 +12,14 @@ import java.util.List;
 @Service
 public class ConferenceRoomService {
 
-    @Autowired
-    OrganizationRepository organizationRepository;
-    @Autowired
-    ConferenceRoomRepository conferenceRoomRepository;
+    private final OrganizationRepository organizationRepository;
+    private  final ConferenceRoomRepository conferenceRoomRepository;
 
-    private ConferenceRoomEntity convertToEntity(ConferenceRoom conferenceRoom) {
-        return conferenceRoom.convertToEntity();
+    public ConferenceRoomService(OrganizationRepository organizationRepository, ConferenceRoomRepository conferenceRoomRepository){
+        this.organizationRepository = organizationRepository;
+        this.conferenceRoomRepository = conferenceRoomRepository;
     }
+
 
     public List<ConferenceRoomEntity> findAll(int organizationId) {
         return organizationRepository.findById(organizationId).getConferenceRooms();
@@ -78,7 +77,7 @@ public class ConferenceRoomService {
         organization.getConferenceRooms().forEach(room -> idList.add(room.getId()));
         organization.getConferenceRooms().clear();
         organizationRepository.save(organization);
-        idList.forEach(id -> conferenceRoomRepository.deleteById(id));
+        idList.forEach(conferenceRoomRepository::deleteById);
     }
 
     public void update(int id, ConferenceRoom newConferenceRoom) {

@@ -1,6 +1,5 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.petrusiewicz.ReservationSystem.entity.OrganizationEntity;
@@ -12,8 +11,11 @@ import java.util.List;
 @Service
 public class OrganizationService {
 
-    @Autowired
-    OrganizationRepository repository;
+    private final OrganizationRepository repository;
+
+    public OrganizationService(OrganizationRepository repository){
+        this.repository = repository;
+    }
 
     public List<OrganizationEntity> findAll() {
         return repository.findAll();

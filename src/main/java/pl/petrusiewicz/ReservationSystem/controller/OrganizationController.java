@@ -1,6 +1,5 @@
 package pl.petrusiewicz.ReservationSystem.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.petrusiewicz.ReservationSystem.error.ErrorMessage;
@@ -13,8 +12,11 @@ import javax.validation.Valid;
 @RequestMapping("/organizations")
 public class OrganizationController {
 
-    @Autowired
-    OrganizationService service;
+    private final OrganizationService service;
+
+    private OrganizationController(OrganizationService service){
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity getAll() {

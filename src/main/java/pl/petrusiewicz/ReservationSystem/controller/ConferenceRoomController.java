@@ -1,6 +1,5 @@
 package pl.petrusiewicz.ReservationSystem.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.petrusiewicz.ReservationSystem.model.ConferenceRoom;
@@ -14,10 +13,13 @@ import javax.validation.Valid;
 @RequestMapping("/organizations/{organizationId}")
 public class ConferenceRoomController {
 
-    @Autowired
-    ConferenceRoomService conferenceRoomService;
-    @Autowired
-    OrganizationService organizationService;
+    private final OrganizationService organizationService;
+    private final ConferenceRoomService conferenceRoomService;
+
+    public ConferenceRoomController(ConferenceRoomService conferenceRoomService, OrganizationService organizationService){
+        this.organizationService = organizationService;
+        this.conferenceRoomService = conferenceRoomService;
+    }
 
     @GetMapping("/rooms")
     public ResponseEntity findAll(@PathVariable int organizationId) {

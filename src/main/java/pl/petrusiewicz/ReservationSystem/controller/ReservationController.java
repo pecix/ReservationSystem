@@ -1,6 +1,5 @@
 package pl.petrusiewicz.ReservationSystem.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.petrusiewicz.ReservationSystem.error.ErrorMessage;
@@ -15,10 +14,13 @@ import javax.validation.Valid;
 @RequestMapping("/organizations/{organizationId}/rooms/{roomId}")
 public class ReservationController {
 
-    @Autowired
-    ReservationService reservationService;
-    @Autowired
-    ConferenceRoomService conferenceRoomService;
+    private final ConferenceRoomService conferenceRoomService;
+    private final ReservationService reservationService;
+
+    public ReservationController(ConferenceRoomService conferenceRoomService, ReservationService reservationService){
+        this.conferenceRoomService = conferenceRoomService;
+        this.reservationService = reservationService;
+    }
 
     @GetMapping("/reservations")
     public ResponseEntity findAll(@PathVariable int roomId) {
