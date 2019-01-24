@@ -1,8 +1,8 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pl.petrusiewicz.ReservationSystem.config.Config;
 import pl.petrusiewicz.ReservationSystem.entity.ReservationEntity;
 import pl.petrusiewicz.ReservationSystem.model.Reservation;
 import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
@@ -26,6 +26,11 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
+    @Value("${reservationService.minBookingTime}")
+    private int minBookingTime;
+    @Value("${reservationService.maxBookingTime}")
+    private int maxBookingTime;
+
     public List<ReservationEntity> findAll(int roomId) {
         return conferenceRoomRepository.findById(roomId).getReservations();
     }
@@ -45,7 +50,7 @@ public class ReservationService {
         var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
         var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
         var minutesBetween = ChronoUnit.MINUTES.between(begin, end);
-        return begin.isBefore(end) && minutesBetween >= Config.MIN_BOOKING_TIME && minutesBetween <= Config.MAX_BOOKING_TIME;
+        return begin.isBefore(end) && minutesBetween >= minBookingTime && minutesBetween <= maxBookingTime;
     }
 
     public ReservationEntity book(int roomId, Reservation reservation) {
