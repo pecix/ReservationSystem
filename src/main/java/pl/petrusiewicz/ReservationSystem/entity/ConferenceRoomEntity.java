@@ -15,13 +15,12 @@ public class ConferenceRoomEntity {
     private String name;
     private String description;
     private Integer floor;
-//    private Boolean available = true;
     private Integer numberOfSeats;
     private Integer numberOfStandingPlaces;
     private Integer numberOfLyingPlaces;
     private Integer numberOfHangingPlaces;
     private String projectorName;
-    private Boolean haveTelephone;
+    private Boolean hasTelephone;
     @OneToOne
     private TelephoneEntity telephone;
     @OneToMany

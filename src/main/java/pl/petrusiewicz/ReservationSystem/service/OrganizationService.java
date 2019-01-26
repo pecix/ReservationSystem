@@ -7,6 +7,7 @@ import pl.petrusiewicz.ReservationSystem.model.Organization;
 import pl.petrusiewicz.ReservationSystem.repository.OrganizationRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrganizationService {
@@ -17,24 +18,16 @@ public class OrganizationService {
         this.repository = repository;
     }
 
-    public List<OrganizationEntity> findAll() {
+    public List<OrganizationEntity> getAll() {
         return repository.findAll();
     }
 
-    public OrganizationEntity findById(int id) {
-        return repository.findById(id);
+    public Optional<OrganizationEntity> getById(int id) {
+        return repository.getById(id);
     }
 
-    public boolean existById(int id) {
-        return repository.existsById(id);
-    }
-
-    public boolean existByName(String name) {
-        return repository.existsByName(name);
-    }
-
-    public OrganizationEntity findByName(String name) {
-        return repository.findByName(name);
+    public Optional<OrganizationEntity> getByName(String name) {
+        return repository.getByName(name);
     }
 
     public OrganizationEntity add(Organization organization) {
@@ -51,10 +44,10 @@ public class OrganizationService {
     }
 
     public void update(int id, Organization newOrganization) {
-        var organizationEntity = findById(id);
-        if (organizationEntity != null) {
-            organizationEntity.setName(newOrganization.getName());
-            repository.save(organizationEntity);
+        var organizationEntity = getById(id);
+        if (organizationEntity.isPresent()) {
+            organizationEntity.get().setName(newOrganization.getName());
+            repository.save(organizationEntity.get());
         }
     }
 

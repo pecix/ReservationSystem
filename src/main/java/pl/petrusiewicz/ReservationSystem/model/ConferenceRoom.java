@@ -25,7 +25,6 @@ public class ConferenceRoom {
     private String projectorName;
     private boolean haveTelephone;
 
-
     public ConferenceRoomEntity convertToEntity() {
         var conferenceRoomEntity = new ConferenceRoomEntity();
         conferenceRoomEntity.setName(name);
@@ -36,7 +35,7 @@ public class ConferenceRoom {
         conferenceRoomEntity.setNumberOfLyingPlaces(numberOfLyingPlaces);
         conferenceRoomEntity.setNumberOfHangingPlaces(numberOfHangingPlaces);
         conferenceRoomEntity.setProjectorName(projectorName);
-        conferenceRoomEntity.setHaveTelephone(haveTelephone);
+        conferenceRoomEntity.setHasTelephone(haveTelephone);
         return conferenceRoomEntity;
     }
 }

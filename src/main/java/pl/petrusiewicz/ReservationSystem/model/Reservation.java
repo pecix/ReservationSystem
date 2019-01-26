@@ -25,5 +25,4 @@ public class Reservation {
         reservationEntity.setEndReservation(endReservation);
         return reservationEntity;
     }
-
 }

@@ -22,5 +22,4 @@ public class Telephone {
         telephoneEntity.setTelephoneConnectionInterface(telephoneConnectionInterface);
         return telephoneEntity;
     }
-
 }

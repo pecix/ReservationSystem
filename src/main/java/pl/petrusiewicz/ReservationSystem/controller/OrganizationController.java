@@ -20,62 +20,57 @@ public class OrganizationController {
 
     @GetMapping
     public ResponseEntity getAll() {
-        return ResponseEntity.ok(service.findAll());
+        return ResponseEntity.status(200).body(service.getAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity get(@PathVariable int id) {
-        if (service.existById(id)) {
-            return ResponseEntity.ok(service.findById(id));
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
-        }
+        var organization = service.getById(id);
+        return organization.isPresent()
+                ? ResponseEntity.status(200).body(organization.get())
+                : ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + id + " don't exist."));
     }
 
     @GetMapping(params = "name")
-    public ResponseEntity findByName(@RequestParam String name) {
-        if (service.existByName(name)) {
-            return ResponseEntity.ok(service.findByName(name));
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacjia o nazwie " + name + " nie istnieje"));
-        }
+    public ResponseEntity getByName(@RequestParam String name) {
+        var organization = service.getByName(name);
+        return organization.isPresent()
+                ? ResponseEntity.status(200).body(organization.get())
+                : ResponseEntity.status(404).body(new ErrorMessage("Organization " + name + " don't exist."));
     }
 
     @PostMapping
     public ResponseEntity add(@Valid @RequestBody Organization organization) {
         organization.setName(organization.getName().trim());
-        if (!service.existByName(organization.getName())) {
-            return ResponseEntity.status(201).body(service.add(organization));
-        } else {
-            return ResponseEntity.status(406).body(new ErrorMessage("Organizacja " + organization.getName() + " już istnieje"));
-        }
+        var organizationFromDb = service.getByName(organization.getName());
+        return organizationFromDb.isEmpty()
+                ? ResponseEntity.status(201).body(service.add(organization))
+                : ResponseEntity.status(406).body(new ErrorMessage("Organization " + organization.getName() + " already exist."));
     }
 
     @DeleteMapping
     public ResponseEntity removeAll() {
         service.removeAll();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(200).build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity remove(@PathVariable int id) {
-        if (service.existById(id)) {
+        var organization = service.getById(id);
+        if (organization.isPresent()) {
             service.remove(id);
             return ResponseEntity.status(200).build();
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
         }
+        return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + id + " don't exist."));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable int id, @Valid @RequestBody Organization organization) {
-        if (service.existById(id)) {
+        var organizationFromDb = service.getById(id);
+        if (organizationFromDb.isPresent()) {
             service.update(id, organization);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + id + " nie istnieje"));
+            return ResponseEntity.status(200).build();
         }
+        return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + id + " don't exist"));
     }
-
-
 }

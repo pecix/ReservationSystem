@@ -20,7 +20,6 @@ public class Organization {
         organizationEntity.setName(name);
         return organizationEntity;
     }
-
 }
 
 

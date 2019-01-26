@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -31,16 +32,27 @@ public class ReservationService {
     @Value("${reservationService.maxBookingTime}")
     private int maxBookingTime;
 
-    public List<ReservationEntity> findAll(int roomId) {
-        return conferenceRoomRepository.findById(roomId).getReservations();
+    public int getMinBookingTime() {
+        return minBookingTime;
     }
 
-    public ReservationEntity findById(int id) {
-        return reservationRepository.findById(id);
+    public int getMaxBookingTime() {
+        return maxBookingTime;
     }
 
-    public List<ReservationEntity> findAllByName(int roomId, String reservingName) {
-        var reservations = findAll(roomId);
+    public List<ReservationEntity> getAll(int roomId) {
+        var conferenceRoom = conferenceRoomRepository.getById(roomId);
+        return conferenceRoom.isPresent()
+                ? conferenceRoom.get().getReservations()
+                : new ArrayList<>();
+    }
+
+    public Optional<ReservationEntity> getById(int id) {
+        return reservationRepository.getById(id);
+    }
+
+    public List<ReservationEntity> getAllByName(int roomId, String reservingName) {
+        var reservations = getAll(roomId);
         return reservations.stream()
                 .filter(res -> res.getReservingName().equalsIgnoreCase(reservingName))
                 .collect(Collectors.toList());
@@ -53,55 +65,65 @@ public class ReservationService {
         return begin.isBefore(end) && minutesBetween >= minBookingTime && minutesBetween <= maxBookingTime;
     }
 
-    public ReservationEntity book(int roomId, Reservation reservation) {
-        var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
-        var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
-        reservation.setBeginReservation(begin);
-        reservation.setEndReservation(end);
-        var conferenceRoom = conferenceRoomRepository.findById(roomId);
-        var reservationEntity = reservation.convertToEntity();
-        reservationRepository.save(reservationEntity);
-        conferenceRoom.getReservations().add(reservationEntity);
-        conferenceRoomRepository.save(conferenceRoom);
-        return reservationEntity;
+    public Optional<ReservationEntity> book(int roomId, Reservation reservation) {
+        var conferenceRoom = conferenceRoomRepository.getById(roomId);
+        if (conferenceRoom.isPresent()){
+            var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
+            var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
+            reservation.setBeginReservation(begin);
+            reservation.setEndReservation(end);
+            var reservationEntity = reservation.convertToEntity();
+            reservationRepository.save(reservationEntity);
+            conferenceRoom.get().getReservations().add(reservationEntity);
+            conferenceRoomRepository.save(conferenceRoom.get());
+            return Optional.ofNullable(reservationEntity);
+        }
+        return Optional.empty();
     }
 
     public void cancelAllByName(int roomId, String reservingName) {
-        var conferenceRoom = conferenceRoomRepository.findById(roomId);
-        var reservations = findAllByName(roomId, reservingName);
-        conferenceRoom.getReservations().removeAll(reservations);
-        conferenceRoomRepository.save(conferenceRoom);
-        reservationRepository.deleteAll(reservations);
+        var conferenceRoom = conferenceRoomRepository.getById(roomId);
+        if(conferenceRoom.isPresent()){
+            var reservations = getAllByName(roomId, reservingName);
+            conferenceRoom.get().getReservations().removeAll(reservations);
+            conferenceRoomRepository.save(conferenceRoom.get());
+            reservationRepository.deleteAll(reservations);
+        }
     }
 
     public void cancelById(int roomId, int id) {
-        var conferenceRoom = conferenceRoomRepository.findById(roomId);
-        conferenceRoom.getReservations().remove(reservationRepository.findById(id));
-        reservationRepository.deleteById(id);
-        conferenceRoomRepository.save(conferenceRoom);
+        var conferenceRoom = conferenceRoomRepository.getById(roomId);
+        var reservation = reservationRepository.getById(id);
+        if (conferenceRoom.isPresent() && reservation.isPresent()){
+            conferenceRoom.get().getReservations().remove(reservation.get());
+            reservationRepository.deleteById(id);
+            conferenceRoomRepository.save(conferenceRoom.get());
+        }
     }
 
     public void cancelAll(int roomId) {
-        var room = conferenceRoomRepository.findById(roomId);
-        var idList = new ArrayList<Integer>();
-        room.getReservations().forEach(res -> idList.add(res.getId()));
-        room.getReservations().clear();
-        conferenceRoomRepository.save(room);
-        idList.forEach(reservationRepository::deleteById);
+        var conferenceRoom = conferenceRoomRepository.getById(roomId);
+        if (conferenceRoom.isPresent()){
+            var idList = new ArrayList<Integer>();
+            conferenceRoom.get().getReservations().forEach(res -> idList.add(res.getId()));
+            conferenceRoom.get().getReservations().clear();
+            conferenceRoomRepository.save(conferenceRoom.get());
+            idList.forEach(reservationRepository::deleteById);
+        }
     }
 
     public void update(int id, Reservation updatedReservation) {
-        var reservation = findById(id);
-        if (reservation != null) {
-            reservation.setReservingName(updatedReservation.getReservingName());
-            reservation.setBeginReservation(updatedReservation.getBeginReservation());
-            reservation.setEndReservation(updatedReservation.getEndReservation());
-            reservationRepository.save(reservation);
+        var reservation = getById(id);
+        if (reservation.isPresent()) {
+            reservation.get().setReservingName(updatedReservation.getReservingName());
+            reservation.get().setBeginReservation(updatedReservation.getBeginReservation());
+            reservation.get().setEndReservation(updatedReservation.getEndReservation());
+            reservationRepository.save(reservation.get());
         }
     }
 
     public boolean checkAvailability(int roomId, Reservation reservation) {
-        var reservations = findAll(roomId);
+        var reservations = getAll(roomId);
         var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
         var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
         Predicate<ReservationEntity> predicate = res -> begin.isEqual(res.getBeginReservation()) || begin.isEqual(res.getEndReservation()) ||

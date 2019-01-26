@@ -5,16 +5,13 @@ import org.springframework.stereotype.Repository;
 import pl.petrusiewicz.ReservationSystem.entity.OrganizationEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrganizationRepository extends JpaRepository<OrganizationEntity, Integer> {
 
-    OrganizationEntity findByName(String name);
+    Optional<OrganizationEntity> getByName(String name);
 
-    OrganizationEntity findById(int id);
-
-    boolean existsByName(String name);
-
-    List<OrganizationEntity> findAll();
+    Optional<OrganizationEntity> getById(int id);
 
 }

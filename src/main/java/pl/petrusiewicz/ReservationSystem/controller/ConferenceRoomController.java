@@ -16,101 +16,79 @@ public class ConferenceRoomController {
     private final OrganizationService organizationService;
     private final ConferenceRoomService conferenceRoomService;
 
-    public ConferenceRoomController(ConferenceRoomService conferenceRoomService, OrganizationService organizationService){
+    public ConferenceRoomController(ConferenceRoomService conferenceRoomService, OrganizationService organizationService) {
         this.organizationService = organizationService;
         this.conferenceRoomService = conferenceRoomService;
     }
 
     @GetMapping("/rooms")
-    public ResponseEntity findAll(@PathVariable int organizationId) {
-        if (!organizationService.existById(organizationId)) {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
-        }
-
-        return ResponseEntity.ok(conferenceRoomService.findAll(organizationId));
+    public ResponseEntity getAll(@PathVariable int organizationId) {
+        var organization = organizationService.getById(organizationId);
+        return organization.isPresent()
+                ? ResponseEntity.status(200).body(conferenceRoomService.getAll(organizationId))
+                : ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + organizationId + " don't exist."));
     }
 
     @GetMapping("/rooms/{id}")
-    public ResponseEntity findById(@PathVariable int organizationId, @PathVariable int id) {
-        if (!organizationService.existById(organizationId)) {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
-        }
-
-        var conferenceRoom = conferenceRoomService.findById(id);
-        if (conferenceRoom != null) {
-            return ResponseEntity.ok().body(conferenceRoom);
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Sala konferencyjna o id: " + id + " nie istnieje"));
-        }
+    public ResponseEntity getById(@PathVariable int organizationId, @PathVariable int id) {
+        if (organizationService.getById(organizationId).isEmpty())
+            return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + organizationId + " don't exist."));
+        var conferenceRoom = conferenceRoomService.getById(id);
+        return conferenceRoom.isPresent()
+                ? ResponseEntity.status(200).body(conferenceRoom)
+                : ResponseEntity.status(404).body(new ErrorMessage("Conference room ID: " + id + " don't exist."));
     }
 
     @GetMapping(value = "/rooms", params = "name")
     public ResponseEntity findByName(@PathVariable int organizationId, @RequestParam String name) {
-        if (!organizationService.existById(organizationId)) {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
-        }
-
-        var conferenceRoom = conferenceRoomService.findByName(organizationId, name);
-        if (conferenceRoom != null) {
-            return ResponseEntity.ok().body(conferenceRoom);
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Sala konferencyjna o nazwie " + name + " nie istnieje."));
-        }
+        if (organizationService.getById(organizationId).isEmpty())
+            return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + organizationId + " don't exist."));
+        var conferenceRoom = conferenceRoomService.getByName(organizationId, name);
+        return conferenceRoom.isPresent()
+                ? ResponseEntity.status(200).body(conferenceRoom)
+                : ResponseEntity.status(404).body(new ErrorMessage("Conference room name " + name + " don't exist."));
     }
 
     @PostMapping("/rooms")
     public ResponseEntity add(@PathVariable int organizationId, @Valid @RequestBody ConferenceRoom conferenceRoom) {
-        if (!organizationService.existById(organizationId)) {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
-        }
-
-        if (!conferenceRoomService.existByName(organizationId, conferenceRoom.getName())) {
-            return ResponseEntity.status(201).body(conferenceRoomService.addConferenceRoom(organizationId, conferenceRoom));
-        } else {
-            return ResponseEntity.status(406).body(new ErrorMessage("Sala konferencyjna o nazwie " + conferenceRoom.getName() + " już istnieje."));
-        }
-
+        if (organizationService.getById(organizationId).isEmpty())
+            return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + organizationId + " don't exist."));
+        var room = conferenceRoomService.getByName(organizationId, conferenceRoom.getName());
+        return room.isEmpty()
+                ? ResponseEntity.status(201).body(conferenceRoomService.addConferenceRoom(organizationId, conferenceRoom))
+                : ResponseEntity.status(406).body(new ErrorMessage("Conference room name " + conferenceRoom.getName() + " already exist."));
     }
 
     @DeleteMapping("/rooms")
     public ResponseEntity removeAll(@PathVariable int organizationId) {
-        if (!organizationService.existById(organizationId)) {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
-        }
-
+        if (organizationService.getById(organizationId).isEmpty())
+            return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + organizationId + " don't exist."));
         conferenceRoomService.removeAll(organizationId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(200).build();
     }
 
     @DeleteMapping("/rooms/{id}")
     public ResponseEntity remove(@PathVariable int organizationId, @PathVariable int id) {
-        if (!organizationService.existById(organizationId)) {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
-        }
-
-        var conferenceRoom = conferenceRoomService.findById(id);
-        if (conferenceRoom != null) {
+        if (organizationService.getById(organizationId).isEmpty())
+            return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + organizationId + " don't exist."));
+        var conferenceRoom = conferenceRoomService.getById(id);
+        if (conferenceRoom.isPresent()) {
             conferenceRoomService.remove(organizationId, id);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Sala konferencyjna o ID: " + id + " nie istnieje."));
+            return ResponseEntity.status(200).build();
         }
+        return ResponseEntity.status(404).body(new ErrorMessage("Conference room ID: " + id + " don't exist."));
     }
 
     @PutMapping("/rooms/{id}")
     public ResponseEntity update(@PathVariable int organizationId, @PathVariable int id, @Valid @RequestBody ConferenceRoom updatedConferenceRoom) {
-        if (!organizationService.existById(organizationId)) {
-            return ResponseEntity.status(404).body(new ErrorMessage("Organizacja o ID: " + organizationId + " nie istnieje"));
-        }
-
-        var conferenceRoom = conferenceRoomService.findById(id);
-        if (conferenceRoom != null) {
+        if (organizationService.getById(organizationId).isEmpty())
+            return ResponseEntity.status(404).body(new ErrorMessage("Organization ID: " + organizationId + " don't exist."));
+        var conferenceRoom = conferenceRoomService.getById(id);
+        if (conferenceRoom.isPresent()) {
             conferenceRoomService.update(id, updatedConferenceRoom);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(404).body(new ErrorMessage("Sala konferencyjna o ID: " + id + " nie istnieje."));
+            return ResponseEntity.status(200).build();
         }
+        return ResponseEntity.status(404).body(new ErrorMessage("Conference room ID: " + id + " don't exist."));
     }
-
-
 }
+
