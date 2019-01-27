@@ -9,8 +9,8 @@ import javax.validation.constraints.Min;
 @Data
 public class Telephone {
 
-    @Min(1)
-    @Max(100)
+    @Min(value = 1, message = "min value 1")
+    @Max(value = 100, message = "max value 100")
     private int internalNumber;
     private String externalNumber;
     private TelephoneConnectionInterface telephoneConnectionInterface;

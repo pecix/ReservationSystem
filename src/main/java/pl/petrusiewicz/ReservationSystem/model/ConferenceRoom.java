@@ -10,13 +10,13 @@ public class ConferenceRoom {
 
     @NotNull
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 20, message = "min 2 characters, max 20 characters")
     private String name;
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 20, message = "min 2 characters, max 20 characters")
     private String description;
-    @Min(0)
-    @Max(10)
+    @Min(value = 0, message = "min value 0")
+    @Max(value = 10, message = "max value 10")
     private int floor;
     private int numberOfSeats;
     private int numberOfStandingPlaces;

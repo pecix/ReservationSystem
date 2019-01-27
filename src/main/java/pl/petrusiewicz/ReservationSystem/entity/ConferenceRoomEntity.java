@@ -12,6 +12,7 @@ public class ConferenceRoomEntity {
     @Id
     @GeneratedValue
     private Integer id;
+    private Integer idOrganization;
     private String name;
     private String description;
     private Integer floor;
@@ -23,7 +24,7 @@ public class ConferenceRoomEntity {
     private Boolean hasTelephone;
     @OneToOne
     private TelephoneEntity telephone;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     private List<ReservationEntity> reservations;
 
 }

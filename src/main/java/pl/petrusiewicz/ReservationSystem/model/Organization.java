@@ -11,8 +11,8 @@ import javax.validation.constraints.Size;
 public class Organization {
 
     @NotNull
-    @Size(min = 2, max = 20)
     @NotBlank
+    @Size(min = 2, max = 20, message = "min 2 characters, max 20 characters")
     private String name;
 
     public OrganizationEntity convertToEntity() {

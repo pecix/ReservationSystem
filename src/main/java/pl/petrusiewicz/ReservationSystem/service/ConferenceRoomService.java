@@ -22,10 +22,7 @@ public class ConferenceRoomService {
     }
 
     public List<ConferenceRoomEntity> getAll(int organizationId) {
-        var organization = organizationRepository.getById(organizationId);
-        return organization.isPresent()
-                ? organization.get().getConferenceRooms()
-                : new ArrayList<>();
+        return conferenceRoomRepository.findAllByIdOrganization(organizationId);
     }
 
     public Optional<ConferenceRoomEntity> getById(int id) {
@@ -33,20 +30,18 @@ public class ConferenceRoomService {
     }
 
     public Optional<ConferenceRoomEntity> getByName(int organizationId, String conferenceRoomName) {
-        var conferenceRooms = getAll(organizationId);
-        return conferenceRooms.stream()
-                .filter(room -> room.getName().equalsIgnoreCase(conferenceRoomName))
-                .findAny();
+        return conferenceRoomRepository.findAllByIdOrganizationAndNameIgnoreCase(organizationId, conferenceRoomName);
     }
 
     public Optional<ConferenceRoomEntity> addConferenceRoom(int organizationId, ConferenceRoom conferenceRoom) {
         var organization = organizationRepository.getById(organizationId);
         if (organization.isPresent()){
             var conferenceRoomEntity = conferenceRoom.convertToEntity();
+            conferenceRoomEntity.setIdOrganization(organizationId);
             conferenceRoomRepository.save(conferenceRoomEntity);
             organization.get().getConferenceRooms().add(conferenceRoomEntity);
             organizationRepository.save(organization.get());
-            return Optional.ofNullable(conferenceRoomEntity);
+            return Optional.of(conferenceRoomEntity);
         }
         return Optional.empty();
     }
@@ -85,5 +80,9 @@ public class ConferenceRoomService {
             conferenceRoom.get().setProjectorName(newConferenceRoom.getProjectorName());
             conferenceRoomRepository.save(conferenceRoom.get());
         }
+    }
+
+    public boolean checkIsOrganizationNotContainsConferenceRoom(int organizationId, int roomId){
+        return !conferenceRoomRepository.existsByIdEqualsAndIdOrganizationEquals(roomId, organizationId);
     }
 }

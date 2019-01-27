@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 public class Reservation {
 
     @NotNull
-    @Size(min = 2, max = 20)
     @NotBlank
+    @Size(min = 2, max = 20, message = "min 2 characters, max 20 characters")
     private String reservingName;
-    @FutureOrPresent
+    @FutureOrPresent(message = "Begin reservation must be future or present")
     private LocalDateTime beginReservation;
-    @Future
+    @Future(message = "End reservation must be future")
     private LocalDateTime endReservation;
 
     public ReservationEntity convertToEntity() {

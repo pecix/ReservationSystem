@@ -22,9 +22,9 @@ public class TelephoneController {
     }
 
     @GetMapping("/telephones")
-    public ResponseEntity get(@PathVariable int roomId) {
-        if (conferenceRoomService.getById(roomId).isEmpty())
-            return ResponseEntity.status(404).body(new ErrorMessage("Conference room ID: " + roomId + " don't exist."));
+    public ResponseEntity get(@PathVariable int organizationId, @PathVariable int roomId) {
+        if (conferenceRoomService.checkIsOrganizationNotContainsConferenceRoom(organizationId, roomId))
+            return ResponseEntity.status(404).body(new ErrorMessage("Bad Organization ID or Conference Room ID"));
         var telephone = telephoneService.get(roomId);
         return telephone.isPresent()
                 ? ResponseEntity.status(200).body(telephone)
@@ -32,9 +32,9 @@ public class TelephoneController {
     }
 
     @PostMapping("/telephones")
-    public ResponseEntity add(@PathVariable int roomId, @Valid @RequestBody Telephone telephone) {
-        if (conferenceRoomService.getById(roomId).isEmpty())
-            return ResponseEntity.status(404).body(new ErrorMessage("Conference room ID: " + roomId + " don't exist."));
+    public ResponseEntity add(@PathVariable int organizationId, @PathVariable int roomId, @Valid @RequestBody Telephone telephone) {
+        if (conferenceRoomService.checkIsOrganizationNotContainsConferenceRoom(organizationId, roomId))
+            return ResponseEntity.status(404).body(new ErrorMessage("Bad Organization ID or Conference Room ID"));
         var tel = telephoneService.get(roomId);
         return tel.isEmpty()
                 ? ResponseEntity.status(201).body(telephoneService.add(roomId, telephone))
@@ -42,9 +42,9 @@ public class TelephoneController {
     }
 
     @DeleteMapping("/telephones")
-    public ResponseEntity remove(@PathVariable int roomId) {
-        if (conferenceRoomService.getById(roomId).isEmpty())
-            return ResponseEntity.status(404).body(new ErrorMessage("Conference room ID: " + roomId + " don't exist."));
+    public ResponseEntity remove(@PathVariable int organizationId, @PathVariable int roomId) {
+        if (conferenceRoomService.checkIsOrganizationNotContainsConferenceRoom(organizationId, roomId))
+            return ResponseEntity.status(404).body(new ErrorMessage("Bad Organization ID or Conference Room ID"));
         if (telephoneService.get(roomId).isPresent()) {
             telephoneService.remove(roomId);
             return ResponseEntity.status(200).build();
@@ -53,9 +53,9 @@ public class TelephoneController {
     }
 
     @PutMapping("/telephones")
-    public ResponseEntity update(@PathVariable int roomId, @Valid @RequestBody Telephone updatedTelephone) {
-        if (conferenceRoomService.getById(roomId).isEmpty())
-            return ResponseEntity.status(404).body(new ErrorMessage("Conference room ID: " + roomId + " don't exist."));
+    public ResponseEntity update(@PathVariable int organizationId, @PathVariable int roomId, @Valid @RequestBody Telephone updatedTelephone) {
+        if (conferenceRoomService.checkIsOrganizationNotContainsConferenceRoom(organizationId, roomId))
+            return ResponseEntity.status(404).body(new ErrorMessage("Bad Organization ID or Conference Room ID"));
         if (telephoneService.get(roomId).isPresent()) {
             telephoneService.update(roomId, updatedTelephone);
             return ResponseEntity.status(200).build();
