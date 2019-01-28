@@ -14,6 +14,7 @@
     - GET - localhost:8080/organizations - Zwraca listę wszystkich organizacji.
     - GET - localhost:8080/organizations/1 - Zwraca organizację po id.
     - GET - localhost:8080/organizations?name=pepsi - Zwraca organizację po nazwie.
+    - DELETE - localhost:8080/organizations - Kasuje wszystkie organizację.
     - DELETE - localhost:8080/organizations/1 - Kasuje organizację po id.
     - PUT - localhost:8080/organizations/1 - Uaktualnia organizację.
 2. Sale konferencyjne:
@@ -33,6 +34,7 @@
     - GET - localhost:8080/organizations/1/rooms - Zwraca wszystkie salę konferencyjne danej organizacji.
     - GET - localhost:8080/organizations/1/rooms?name=blue - Zwraca salę konferencyjną po nazwie.
     - GET - localhost:8080/organizations/1/rooms/2 - Zwraca salę konferencyjną po id.
+    - DELETE - localhost:8080/organizations/1/rooms - Kasuje wszystkie sale konferencyjne danej organizacji.
     - DELETE - localhost:8080/organizations/1/rooms/2 - Kasuje salę konferencyjną po id.
     - PUT - localhost:8080/organizations/1/rooms/2 - Uaktualnia salę konferencyjną.
 3. Telefony:
@@ -53,9 +55,11 @@
           	"endReservation": "2019-05-10T12:00"
           }`
     - GET - localhost:8080/organizations/1/rooms/2/reservations - Zwraca wszystkie rezerwacje sali konferencyjnej.
-    - GET - localhost:8080/organizations/1/rooms/2/reservations/3 - Zwraca rezerwację po id.
-    - GET - localhost:8080/organizations/1/rooms/2/reservations?name=cola - Zwraca wszystkie rezerwację po nazwie rezerwującego.
+    - GET - localhost:8080/organizations/1/rooms/2/reservations/3 - Zwraca rezerwacje po id.
+    - GET - localhost:8080/organizations/1/rooms/2/reservations?name=cola - Zwraca wszystkie rezerwacje rezerwującego.
+    - GET - localhost:8080/organizations/1/rooms/2/reservations?sort=true - Zwraca wszystkie rezerwacje posortowane chronologicznie.
+    - DELETE - localhost:8080/organizations/1/rooms/2/reservations - Kasuje wszystkie rezerwacje danej sali konferencyjnej.
+    - DELETE - localhost:8080/organizations/1/rooms/2/reservations/3 - Kasuje rezerwacje po id.
     - DELETE - localhost:8080/organizations/1/rooms/2/reservations?name=cola - Kasuje wszystkie rezerwacje rezerwującego po jego nazwie.
-    - DELETE - localhost:8080/organizations/1/rooms/2/reservations/3 - Kasuje rezerwację po id.
-    - PUT - localhost:8080/organizations/1/rooms/2/reservations/3 - Uaktualnia rezerwację po id.
+    - PUT - localhost:8080/organizations/1/rooms/2/reservations/3 - Uaktualnia rezerwacje po id.
     

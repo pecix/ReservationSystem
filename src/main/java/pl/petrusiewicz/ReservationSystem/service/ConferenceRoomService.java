@@ -14,7 +14,7 @@ import java.util.Optional;
 public class ConferenceRoomService {
 
     private final OrganizationRepository organizationRepository;
-    private  final ConferenceRoomRepository conferenceRoomRepository;
+    private final ConferenceRoomRepository conferenceRoomRepository;
 
     public ConferenceRoomService(OrganizationRepository organizationRepository, ConferenceRoomRepository conferenceRoomRepository){
         this.organizationRepository = organizationRepository;
