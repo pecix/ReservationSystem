@@ -2,6 +2,7 @@ package pl.petrusiewicz.ReservationSystem.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.petrusiewicz.ReservationSystem.config.Config;
 import pl.petrusiewicz.ReservationSystem.error.ErrorMessage;
 import pl.petrusiewicz.ReservationSystem.model.Reservation;
 import pl.petrusiewicz.ReservationSystem.service.ConferenceRoomService;
@@ -16,10 +17,12 @@ public class ReservationController {
 
     private final ConferenceRoomService conferenceRoomService;
     private final ReservationService reservationService;
+    private final Config config;
 
-    public ReservationController(ConferenceRoomService conferenceRoomService, ReservationService reservationService) {
+    private ReservationController(ConferenceRoomService conferenceRoomService, ReservationService reservationService, Config config) {
         this.conferenceRoomService = conferenceRoomService;
         this.reservationService = reservationService;
+        this.config = config;
     }
 
     @GetMapping("/reservations")
@@ -65,8 +68,8 @@ public class ReservationController {
             return ResponseEntity.status(404).body(new ErrorMessage("Bad Organization ID or Conference Room ID"));
         if (!reservationService.checkTimeRestriction(reservation))
             return ResponseEntity.status(406).body(new ErrorMessage("Booking should have a minimum of "
-                    + reservationService.getMinBookingTime() + " minutes and a maximum of "
-                    + reservationService.getMaxBookingTime() + " minutes."));
+                    + config.getMinBookingTime() + " minutes and a maximum of "
+                    + config.getMaxBookingTime() + " minutes."));
         return !reservationService.isAlreadyReserved(roomId, reservation)
                 ? ResponseEntity.status(201).body(reservationService.book(roomId, reservation))
                 : ResponseEntity.status(406).body(new ErrorMessage("Conference room is reserved at this time."));

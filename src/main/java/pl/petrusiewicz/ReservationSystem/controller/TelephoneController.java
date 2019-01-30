@@ -16,7 +16,7 @@ public class TelephoneController {
     private final ConferenceRoomService conferenceRoomService;
     private final TelephoneService telephoneService;
 
-    public TelephoneController(ConferenceRoomService conferenceRoomService, TelephoneService telephoneService){
+    private TelephoneController(ConferenceRoomService conferenceRoomService, TelephoneService telephoneService){
         this.conferenceRoomService = conferenceRoomService;
         this.telephoneService = telephoneService;
     }

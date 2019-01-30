@@ -1,8 +1,8 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.petrusiewicz.ReservationSystem.config.Config;
 import pl.petrusiewicz.ReservationSystem.entity.ReservationEntity;
 import pl.petrusiewicz.ReservationSystem.model.Reservation;
 import pl.petrusiewicz.ReservationSystem.repository.ConferenceRoomRepository;
@@ -18,23 +18,12 @@ public class ReservationService {
 
     private final ConferenceRoomRepository conferenceRoomRepository;
     private final ReservationRepository reservationRepository;
+    private final Config config;
 
-    public ReservationService(ConferenceRoomRepository conferenceRoomRepository, ReservationRepository reservationRepository) {
+    public ReservationService(ConferenceRoomRepository conferenceRoomRepository, ReservationRepository reservationRepository, Config config) {
         this.conferenceRoomRepository = conferenceRoomRepository;
         this.reservationRepository = reservationRepository;
-    }
-
-    @Value("${reservationService.minBookingTime}")
-    private int minBookingTime;
-    @Value("${reservationService.maxBookingTime}")
-    private int maxBookingTime;
-
-    public int getMinBookingTime() {
-        return minBookingTime;
-    }
-
-    public int getMaxBookingTime() {
-        return maxBookingTime;
+        this.config = config;
     }
 
     public List<ReservationEntity> getAll(int roomId) {
@@ -53,7 +42,7 @@ public class ReservationService {
         var begin = reservation.getBeginReservation().truncatedTo(ChronoUnit.MINUTES);
         var end = reservation.getEndReservation().truncatedTo(ChronoUnit.MINUTES);
         var minutesBetween = ChronoUnit.MINUTES.between(begin, end);
-        return begin.isBefore(end) && minutesBetween >= minBookingTime && minutesBetween <= maxBookingTime;
+        return begin.isBefore(end) && minutesBetween >= config.getMinBookingTime() && minutesBetween <= config.getMaxBookingTime();
     }
 
     public Optional<ReservationEntity> book(int roomId, Reservation reservation) {

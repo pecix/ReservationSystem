@@ -16,7 +16,7 @@ public class ConferenceRoomController {
     private final OrganizationService organizationService;
     private final ConferenceRoomService conferenceRoomService;
 
-    public ConferenceRoomController(ConferenceRoomService conferenceRoomService, OrganizationService organizationService) {
+    private ConferenceRoomController(ConferenceRoomService conferenceRoomService, OrganizationService organizationService) {
         this.organizationService = organizationService;
         this.conferenceRoomService = conferenceRoomService;
     }

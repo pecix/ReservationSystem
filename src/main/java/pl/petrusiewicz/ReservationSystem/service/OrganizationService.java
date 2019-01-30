@@ -1,7 +1,6 @@
 package pl.petrusiewicz.ReservationSystem.service;
 
 import org.springframework.stereotype.Service;
-
 import pl.petrusiewicz.ReservationSystem.entity.OrganizationEntity;
 import pl.petrusiewicz.ReservationSystem.model.Organization;
 import pl.petrusiewicz.ReservationSystem.repository.OrganizationRepository;
